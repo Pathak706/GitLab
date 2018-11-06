@@ -21,6 +21,6 @@ module.exports = {
     },
     invalidrequest: {
         code: "INVREQUEST",
-        message: "Invalid Requesr"
+        message: "Invalid Request"
     }
 }
