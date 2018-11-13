@@ -140,6 +140,7 @@ let service = {
                         $in: body.users.split(",")
                     };
                 }
+                delete body.users;
                 model.getExpenses(body).then(resolve, reject);
             } catch (e) {
                 console.error(e)

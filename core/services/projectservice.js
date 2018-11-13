@@ -118,10 +118,11 @@ let service = {
                 }
                 model.getNewInstance({});
                 if (!!body.users) {
-                    body.users = {
+                    body.userId = {
                         $in: body.users.split(",")
                     };
                 }
+                delete body.users;
                 model.getProjects(body).then(resolve, reject);
             } catch (e) {
                 console.error(e)
