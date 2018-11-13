@@ -5,15 +5,15 @@ module.exports = model = class model {
     constructor(object) {
         let instance = this;
         instance._session = object || {};
-        instance.tableName = 'projects'
+        instance.tableName = 'transportationExpense'
     };
     getNewInstance(values) {
         let instance = this;
         try {
             instance.dbObject = {};
+            instance.dbObject.expenseId = null;
+            instance.dbObject.userId = null;
             instance.dbObject.projectId = null;
-            instance.dbObject.projectName = null;
-            instance.dbObject.users = null;
             instance.dbObject.created_at = null;
             instance.dbObject.updated_at = null;
             instance.dbObject.created_by = null;
@@ -112,7 +112,7 @@ module.exports = model = class model {
         let instance = this;
         return new Promise(function(resolve, reject) {
             let key = {
-                projectId: (instance.dbObject || {}).projectId || null
+                expenseId: (instance.dbObject || {}).expenseId || null
             }
             let readCallback = (err, result) => {
                 if (err) {
@@ -139,7 +139,7 @@ module.exports = model = class model {
         return new Promise(function(resolve, reject) {
             let toSet = {};
             let findQuery = {
-                projectId: (instance.dbObject || {}).projectId || null
+                expenseId: (instance.dbObject || {}).expenseId || null
             }
             if (!!values && typeof values === "object" && Object.keys(values).length) {
                 Object.keys(instance.dbObject).forEach((key) => {
@@ -176,7 +176,7 @@ module.exports = model = class model {
         let instance = this;
         return new Promise(function(resolve, reject) {
             let key = {
-                projectId: (instance.dbObject || {}).projectId || null
+                expenseId: (instance.dbObject || {}).expenseId || null
             }
             let removeCallback = (err, result) => {
                 if (err) {
@@ -192,33 +192,7 @@ module.exports = model = class model {
             });
         });
     }
-    readUniqueProject() {
-        let instance = this;
-        return new Promise(function(resolve, reject) {
-            let key = {
-                projectName: (instance.dbObject || {}).projectName
-            }
-            let readCallback = (err, result) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    if (result === null || !Object.keys(result).length) {
-                        reject([rs.notfound]);
-                    } else {
-                        let out = instance.getNewInstance(result);
-                        delete out.dbObject.password;
-                        resolve(out.dbObject);
-                    }
-                }
-            }
-            initDatabases('expensemanager').then((db) => {
-                db.collection(instance.tableName).findOne(key, readCallback);
-            }).catch(err => {
-                reject(err);
-            });
-        });
-    }
-    getProjects(query) {
+    getExpenses(query) {
         let instance = this;
         return new Promise(function(resolve, reject) {
             let key = query;

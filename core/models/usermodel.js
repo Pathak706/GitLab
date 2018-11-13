@@ -65,12 +65,22 @@ module.exports = model = class model {
             return null;
         }
     };
-    validate() {
+    validate(requiredFields) {
         let instance = this;
         return new Promise(function(resolve, reject) {
             try {
                 let obj = instance.dbObject || {};
                 let errors = [];
+                requiredFields = requiredFields || [];
+                for (var i = 0; i < requiredFields.length; i++) {
+                    if (obj[requiredFields[i]] == null || typeof obj[requiredFields[i]] == "undefined") {
+                        errors.push({
+                            code: "VALIDATIONERROR",
+                            message: requiredFields[i] + " missing",
+                            title: "ERROR"
+                        });
+                    }
+                }
                 if (!!errors.length) {
                     reject(errors);
                 } else {
@@ -94,6 +104,8 @@ module.exports = model = class model {
             };
             instance.dbObject.created_at = new Date().getTime();
             instance.dbObject.updated_at = new Date().getTime();
+            instance.dbObject.created_by = (instance._session || {}).userId || null;
+            instance.dbObject.updated_by = (instance._session || {}).userId || null;
             initDatabases('expensemanager').then((db) => {
                 db.collection(instance.tableName).insertOne(instance.dbObject, createCallback);
             }).catch(err => {
@@ -167,6 +179,7 @@ module.exports = model = class model {
                 });
             };
             toSet['updated_at'] = new Date().getTime();
+            toSet['updated_by'] = (instance._session || {}).userId || null;
             let updateCallback = (err, result) => {
                 if (err) {
                     reject(err)
