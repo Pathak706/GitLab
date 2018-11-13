@@ -14,6 +14,7 @@ let service = {
                 let model = new projectModel(_session);
                 body.expenseId = body.expenseId || utils.getUniqueId();
                 body.files = files || []
+                body.gstPaid = (body.gstPaid === "true" ? true : (body.gstPaid === "false" ? false : null));
                 let onSuccess = (dbObj) => {
                     resolve(dbObj);
                 };
