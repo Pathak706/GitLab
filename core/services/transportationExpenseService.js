@@ -6,10 +6,14 @@ let service = {
         return new Promise(function(resolve, reject) {
             try {
                 let _session = args[0] || {};
-                let body = args[1] || {};
+                let body = utils.clone(args[1] || {});
+                let files = args[2] || [];
                 let projectModel = require('./../models/transportationExpenseModel');
+                let projectservice = require('./projectservice').service;
+                let userservice = require('./userservice').service;
                 let model = new projectModel(_session);
                 body.expenseId = body.expenseId || utils.getUniqueId();
+                body.files = files || []
                 let onSuccess = (dbObj) => {
                     resolve(dbObj);
                 };
@@ -18,7 +22,22 @@ let service = {
                 };
                 model.getNewInstance(body);
                 const requiredFields = ['projectId', 'userId', 'expenseId'];
-                model.validate(requiredFields).then(() => model.create()).then(onSuccess).catch(onError)
+                model.validate(requiredFields)
+                    .then(() => {
+                        return projectservice.read(_session, body.projectId);
+                    })
+                    .then((project) => {
+                        if ((project.users || []).indexOf(body.userId) < 0) {
+                            return Promise.reject([rs.accessnotgranted])
+                        } else {
+                            return userservice.read(_session, body.userId);
+                        }
+                    })
+                    .then(() => {
+                        return model.create()
+                    })
+                    .then(onSuccess)
+                    .catch(onError)
             } catch (e) {
                 console.error(e)
                 reject(e);
@@ -34,6 +53,9 @@ let service = {
                 let model = new projectModel(_session);
                 let body = {};
                 body.expenseId = expenseId || null;
+                if (!body.expenseId) {
+                    return Promise.reject([rs.invalidrequest])
+                }
                 model.getNewInstance(body);
                 model.read().then((dbObj) => {
                     resolve(dbObj);
@@ -58,6 +80,9 @@ let service = {
                 let model = new projectModel(_session);
                 let body = {};
                 body.expenseId = expenseId || null;
+                if (!body.expenseId) {
+                    return Promise.reject([rs.invalidrequest])
+                }
                 model.getNewInstance(body);
                 model.update(updateObj).then((dbObj) => {
                     resolve(dbObj);
@@ -81,6 +106,9 @@ let service = {
                 let model = new projectModel(_session);
                 let body = {};
                 body.expenseId = expenseId || null;
+                if (!body.expenseId) {
+                    return Promise.reject([rs.invalidrequest])
+                }
                 model.getNewInstance(body);
                 model.delete().then((dbObj) => {
                     resolve(dbObj);
@@ -131,7 +159,7 @@ let router = {
                 }]
             })
         };
-        service.create(req.session, req.body).then(successCB, next);
+        service.create(req.session, req.body, req.files).then(successCB, next);
     },
     read: (req, res, next) => {
         let successCB = (data) => {
@@ -141,7 +169,7 @@ let router = {
                     message: "Expense Read Successfully",
                     code: "READ"
                 }],
-                user: data
+                expense: data
             })
         };
         service.read(req.session, req.params.expenseId).then(successCB, next);
@@ -166,7 +194,7 @@ let router = {
                     message: "Expenses Read Successfully",
                     code: "READ"
                 }],
-                projects: data
+                expenses: data
             })
         };
         service.getExpenses(req.session, req.query).then(successCB, next);

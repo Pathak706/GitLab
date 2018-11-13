@@ -16,7 +16,6 @@ let service = {
                 model.signInRead().then((dbObj) => {
                     return pv.verify(body.password, dbObj.password);
                 }).then((result) => {
-                    console.log(result, model.getAttribute('userId'))
                     if (!!result) {
                         let userservice = require('./userservice').service;
                         return userservice.getMe(_session, model.getAttribute('userId'));

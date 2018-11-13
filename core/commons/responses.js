@@ -22,5 +22,9 @@ module.exports = {
     invalidrequest: {
         code: "INVREQUEST",
         message: "Invalid Request"
+    },
+    accessnotgranted: {
+        code: "ACCESSDENIED",
+        message: "Invalid Request"
     }
 }

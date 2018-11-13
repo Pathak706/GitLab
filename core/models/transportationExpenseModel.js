@@ -14,6 +14,7 @@ module.exports = model = class model {
             instance.dbObject.expenseId = null;
             instance.dbObject.userId = null;
             instance.dbObject.projectId = null;
+            instance.dbObject.files = null;
             instance.dbObject.created_at = null;
             instance.dbObject.updated_at = null;
             instance.dbObject.created_by = null;
