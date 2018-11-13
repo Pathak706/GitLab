@@ -5,7 +5,7 @@ module.exports = model = class model {
     constructor(object) {
         let instance = this;
         instance._session = object || {};
-        instance.tableName = 'transportationExpense'
+        instance.tableName = 'localConveyanceExpense'
     };
     getNewInstance(values) {
         let instance = this;
@@ -15,19 +15,6 @@ module.exports = model = class model {
             instance.dbObject.userId = null;
             instance.dbObject.projectId = null;
             instance.dbObject.files = null;
-            instance.dbObject.placeOfVisit = null;
-            instance.dbObject.customerName = null;
-            instance.dbObject.jobNumber = null;
-            instance.dbObject.projectName = null;
-            instance.dbObject.purposeOfVisit = null;
-            instance.dbObject.contactPersonName = null;
-            instance.dbObject.expenseDate = null;
-            instance.dbObject.modeOfTransport = null;
-            instance.dbObject.type = null;
-            instance.dbObject.payment = null;
-            instance.dbObject.totalFare = null;
-            instance.dbObject.localConveyanceDescription = null;
-            instance.dbObject.localConveyanceTotal = null;
             instance.dbObject.created_at = null;
             instance.dbObject.updated_at = null;
             instance.dbObject.created_by = null;
