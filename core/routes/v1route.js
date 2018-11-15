@@ -9,6 +9,7 @@ let miscellaneousExpenseService = require('./../services/miscellaneousExpenseSer
 let purchaseGstExpenseService = require('./../services/purchaseGstExpenseService').router;
 let localConveyanceExpenseService = require('./../services/localConveyanceExpenseService').router;
 let projectExpenseService = require('./../services/projectExpenseService').router;
+let requestPaymentService = require('./../services/requestPaymentService').router;
 let jwt = require('./../commons/jwt');
 module.exports = (express) => {
     let versionRouter = express.Router();
@@ -79,6 +80,12 @@ module.exports = (express) => {
     versionRouter.get('/expenses/project-expenses/:expenseId/files/:filename', jwt.verifyRequest, fileservice.expenseReadFileRequest);
     versionRouter.put('/expenses/project-expenses/:expenseId', jwt.verifyRequest, projectExpenseService.update);
     versionRouter.get('/expenses/project-expenses/', jwt.verifyRequest, projectExpenseService.getExpenses);
+
+    versionRouter.post('/requests/payments', jwt.verifyRequest, fileservice.requestPaymentCreateRequest, requestPaymentService.create);
+    versionRouter.get('/requests/payments/:paymentId', jwt.verifyRequest, requestPaymentService.read);
+    versionRouter.get('/requests/payments/:paymentId/files/:filename', jwt.verifyRequest, fileservice.requestPaymentReadFileRequest);
+    versionRouter.put('/requests/payments/:paymentId', jwt.verifyRequest, requestPaymentService.update);
+    versionRouter.get('/requests/payments/', jwt.verifyRequest, requestPaymentService.getPayments);
     /* Expenses Routes */
 
 
