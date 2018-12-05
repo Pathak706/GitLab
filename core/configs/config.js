@@ -1,5 +1,5 @@
 module.exports = {
-    port: 9090,
+    port: 9009,
     db: {
         system: "MONGO",
         databases: [{
