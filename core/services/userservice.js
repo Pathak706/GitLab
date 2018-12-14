@@ -91,6 +91,31 @@ let service = {
             }
         });
     },
+    updateAttributes: (...args) => {
+        return new Promise(function(resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let userId = args[1] || null;
+                let updateObj = args[2] || {};
+                let userModel = require('./../models/usermodel');
+                let model = new userModel(_session);
+                let body = {};
+                body.userId = userId || null;
+                model.getNewInstance(body);
+                model.read().then((dbObj) => {
+                    let attributes = dbObj.attributes || {};
+                    attributes = Object.assign(attributes, updateObj);
+                    return model.update({
+                        attributes: attributes
+                    })
+
+                }).then(resolve, reject);
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
     delete: (...args) => {
         return new Promise(function(resolve, reject) {
             try {
@@ -119,15 +144,18 @@ let service = {
             try {
                 let _session = args[0] || {};
                 let userId = args[1] || null;
+                let queryParams = args[2] || {};
                 let userModel = require('./../models/usermodel');
                 let model = new userModel(_session);
                 let body = {};
                 body.userId = userId || null;
                 model.getNewInstance(body);
                 model.read().then((dbObj) => {
-                    let jwt = require('./../commons/jwt');
+                    let jwt = require('./../commons/jwt');;
+                    queryParams.fields = !!queryParams.fields && !!queryParams.fields.length ? queryParams.fields.split(",") : []
+                    console.log(queryParams.fields)
                     resolve({
-                        me: model.getObject(),
+                        me: model.getObject(queryParams.fields || []),
                         token: jwt.generate({
                             userId: model.getAttribute('userId'),
                         })
@@ -197,6 +225,18 @@ let router = {
         };
         service.update(req.session, req.params.userId, req.body).then(successCB, next);
     },
+    updateAttributes: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "User Updated Successfully",
+                    code: "UPDATED"
+                }]
+            })
+        };
+        service.updateAttributes(req.session, req.params.userId, req.body).then(successCB, next);
+    },
     me: (req, res, next) => {
         let successCB = (data) => {
             res.json({
@@ -210,7 +250,7 @@ let router = {
             })
         };
         req.params.userId = req.session.userId;
-        service.getMe(req.session, req.params.userId).then(successCB, next);
+        service.getMe(req.session, req.params.userId, req.query).then(successCB, next);
     }
 };
 module.exports.service = service;

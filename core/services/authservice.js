@@ -18,7 +18,7 @@ let service = {
                 }).then((result) => {
                     if (!!result) {
                         let userservice = require('./userservice').service;
-                        return userservice.getMe(_session, model.getAttribute('userId'));
+                        return userservice.getMe(_session, model.getAttribute('userId'), {});
                     }
                     throw rs.signin;
                 }).then((dbObj) => {
