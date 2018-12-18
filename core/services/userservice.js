@@ -139,6 +139,34 @@ let service = {
             }
         });
     },
+    deleteAttributes: (...args) => {
+        return new Promise(function(resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let userId = args[1] || null;
+                let deleteObj = args[2] || {};
+                let userModel = require('./../models/usermodel');
+                let model = new userModel(_session);
+                let body = {};
+                body.userId = userId || null;
+                model.getNewInstance(body);
+                model.read().then((dbObj) => {
+                    let attributes = dbObj.attributes || {};
+                    let deleteKeys = Objects.keys(deleteObj) || [];
+                    for (var i = 0; i < deleteKeys.length; i++) {
+                        delete attributes[deleteKeys[i]];
+                    }
+                    return model.update({
+                        attributes: attributes
+                    })
+
+                }).then(resolve, reject);
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
     getMe: (...args) => {
         return new Promise(function(resolve, reject) {
             try {
@@ -236,6 +264,18 @@ let router = {
             })
         };
         service.updateAttributes(req.session, req.params.userId, req.body).then(successCB, next);
+    },
+    deleteAttributes: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "User Updated Successfully",
+                    code: "UPDATED"
+                }]
+            })
+        };
+        service.deleteAttributes(req.session, req.params.userId, req.body).then(successCB, next);
     },
     me: (req, res, next) => {
         let successCB = (data) => {

@@ -14,6 +14,7 @@ module.exports = model = class model {
             instance.dbObject.projectId = null;
             instance.dbObject.projectName = null;
             instance.dbObject.users = null;
+            instance.dbObject.attributes = null;
             instance.dbObject.created_at = null;
             instance.dbObject.updated_at = null;
             instance.dbObject.created_by = null;

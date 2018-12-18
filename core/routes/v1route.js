@@ -28,6 +28,7 @@ module.exports = (express) => {
     versionRouter.get('/users/:userId', userservice.read);
     versionRouter.put('/users/:userId', userservice.update);
     versionRouter.put('/users/:userId/attributes', jwt.verifyRequest, userservice.updateAttributes);
+    versionRouter.delete('/users/:userId/attributes', jwt.verifyRequest, userservice.deleteAttributes);
     //versionRouter.delete('/users/:userId', userservice.delete);
     /* User Routes */
 
@@ -36,6 +37,8 @@ module.exports = (express) => {
     versionRouter.get('/projects', jwt.verifyRequest, projectservice.getProjects);
     versionRouter.get('/projects/:projectId', jwt.verifyRequest, projectservice.read);
     versionRouter.put('/projects/:projectId', jwt.verifyRequest, projectservice.update);
+    versionRouter.put('/projects/:projectId/attributes', jwt.verifyRequest, projectservice.updateAttributes);
+    versionRouter.delete('/projects/:projectId/attributes', jwt.verifyRequest, projectservice.deleteAttributes);
     /* Project Routes */
 
 

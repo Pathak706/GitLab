@@ -82,6 +82,59 @@ let service = {
             }
         });
     },
+    updateAttributes: (...args) => {
+        return new Promise(function(resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let projectId = args[1] || null;
+                let updateObj = args[2] || {};
+                let projectModel = require('./../models/projectmodel');
+                let model = new projectModel(_session);
+                let body = {};
+                body.projectId = projectId || null;
+                model.getNewInstance(body);
+                model.read().then((dbObj) => {
+                    let attributes = dbObj.attributes || {};
+                    attributes = Object.assign(attributes, updateObj);
+                    return model.update({
+                        attributes: attributes
+                    })
+
+                }).then(resolve, reject);
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
+    deleteAttributes: (...args) => {
+        return new Promise(function(resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let projectId = args[1] || null;
+                let deleteObj = args[2] || {};
+                let projectModel = require('./../models/projectmodel');
+                let model = new projectModel(_session);
+                let body = {};
+                body.projectId = projectId || null;
+                model.getNewInstance(body);
+                model.read().then((dbObj) => {
+                    let attributes = dbObj.attributes || {};
+                    let deleteKeys = Object.keys(deleteObj) || [];
+                    for (var i = 0; i < deleteKeys.length; i++) {
+                        delete attributes[deleteKeys[i]];
+                    }
+                    return model.update({
+                        attributes: attributes
+                    })
+
+                }).then(resolve, reject);
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
     delete: (...args) => {
         return new Promise(function(resolve, reject) {
             try {
@@ -133,6 +186,7 @@ let service = {
                             let projUser = [];
                             let users = projects[i].users || []
                             for (var j = 0; j < users.length; j++) {
+                                console.log(users)
                                 if (!!userObjs[users[j]]) {
                                     projUser.push(userObjs[users[j]]);
                                 } else {
@@ -200,6 +254,30 @@ let router = {
             })
         };
         service.update(req.session, req.params.projectId, req.body).then(successCB, next);
+    },
+    updateAttributes: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "Project Updated Successfully",
+                    code: "UPDATED"
+                }]
+            })
+        };
+        service.updateAttributes(req.session, req.params.projectId, req.body).then(successCB, next);
+    },
+    deleteAttributes: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "Project Updated Successfully",
+                    code: "UPDATED"
+                }]
+            })
+        };
+        service.deleteAttributes(req.session, req.params.projectId, req.body).then(successCB, next);
     },
     getProjects: (req, res, next) => {
         let successCB = (data) => {
