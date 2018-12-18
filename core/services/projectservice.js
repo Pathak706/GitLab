@@ -111,6 +111,7 @@ let service = {
                 let _session = args[0] || {};
                 let body = args[1] || {};
                 let projectModel = require('./../models/projectmodel');
+                let userservice = require('./userservice').service;
                 let model = new projectModel(_session);
                 if (!Object.keys(body).length) {
                     reject([rs.invalidrequest])
@@ -124,7 +125,37 @@ let service = {
                 } else {
                     delete body.users;
                 }
-                model.getProjects(body).then(resolve, reject);
+
+                function readAllUsers(projects) {
+                    return new Promise(async function(resolve, reject) {
+                        let userObjs = {};
+                        for (var i = 0; i < projects.length; i++) {
+                            let projUser = [];
+                            let users = projects[i].users || []
+                            for (var j = 0; j < users.length; j++) {
+                                if (!!userObjs[users[j]]) {
+                                    projUser.push(userObjs[users[j]]);
+                                } else {
+                                    let u = await userservice.read(_session, users[j]).catch((e) => {
+                                        reject(e);
+                                        return;
+                                    });
+                                    if (!!u) {
+                                        delete u.permissions;
+                                        userObjs[u.userId] = u;
+                                        projUser.push(u);
+                                    } else {
+                                        reject([rs.invalidrequest]);
+                                        return;
+                                    }
+                                }
+                            }
+                            projects[i].users = projUser;
+                        }
+                        return resolve(projects);
+                    });
+                }
+                model.getProjects(body).then(readAllUsers).then(resolve, reject);
             } catch (e) {
                 console.error(e)
                 reject(e);
