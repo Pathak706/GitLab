@@ -152,7 +152,7 @@ let service = {
                 model.getNewInstance(body);
                 model.read().then((dbObj) => {
                     let attributes = dbObj.attributes || {};
-                    let deleteKeys = Objects.keys(deleteObj) || [];
+                    let deleteKeys = Object.keys(deleteObj) || [];
                     for (var i = 0; i < deleteKeys.length; i++) {
                         delete attributes[deleteKeys[i]];
                     }

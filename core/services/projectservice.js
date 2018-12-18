@@ -166,17 +166,21 @@ let service = {
                 let projectModel = require('./../models/projectmodel');
                 let userservice = require('./userservice').service;
                 let model = new projectModel(_session);
-                if (!Object.keys(body).length) {
-                    reject([rs.invalidrequest])
-                    return;
+                // if (!Object.keys(body).length) {
+                //     reject([rs.invalidrequest])
+                //     return;
+                // }
+                let qKeys = Object.keys(body) || []
+                for (var i = 0; i < qKeys.length; i++) {
+                    if (!body[qKeys[i]]) {
+                        delete body[qKeys[i]];
+                    }
                 }
                 model.getNewInstance({});
                 if (!!body.users) {
                     body.users = {
                         $in: body.users.split(",")
                     };
-                } else {
-                    delete body.users;
                 }
 
                 function readAllUsers(projects) {
@@ -186,7 +190,6 @@ let service = {
                             let projUser = [];
                             let users = projects[i].users || []
                             for (var j = 0; j < users.length; j++) {
-                                console.log(users)
                                 if (!!userObjs[users[j]]) {
                                     projUser.push(userObjs[users[j]]);
                                 } else {
