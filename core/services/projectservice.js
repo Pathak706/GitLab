@@ -1,6 +1,7 @@
 const rs = require("./../commons/responses");
 const utils = require("./../commons/utils");
 const _ = require("lodash");
+const fs = require('fs')
 let pv = require("./../commons/passwordVerification");
 let service = {
     create: (...args) => {
@@ -218,6 +219,22 @@ let service = {
                 reject(e);
             }
         });
+    },
+    getProjectPdf: (...args) => {
+        return new Promise(function(resolve, reject) {
+            try {
+                service.getProjects(args[0], args[1])
+                    .then(require('./formatHtmlService'))
+                    .then((htmlData) => {
+                        return require('./pdfservice')(htmlData, 'utf8');
+                    })
+                    .then(resolve)
+                    .catch(reject);
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
     }
 }
 let router = {
@@ -294,6 +311,14 @@ let router = {
             })
         };
         service.getProjects(req.session, req.query).then(successCB, next);
+    },
+    getProjectPdf: (req, res, next) => {
+        let successCB = (data) => {
+            res.header('Content-type', 'application/pdf');
+            res.sendFile(data);
+            return;
+        };
+        service.getProjectPdf(req.session, req.query).then(successCB, next);
     }
 };
 module.exports.service = service;

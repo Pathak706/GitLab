@@ -181,7 +181,6 @@ let service = {
                 model.read().then((dbObj) => {
                     let jwt = require('./../commons/jwt');;
                     queryParams.fields = !!queryParams.fields && !!queryParams.fields.length ? queryParams.fields.split(",") : []
-                    console.log(queryParams.fields)
                     resolve({
                         me: model.getObject(queryParams.fields || []),
                         token: jwt.generate({

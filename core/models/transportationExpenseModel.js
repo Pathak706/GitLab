@@ -218,7 +218,6 @@ module.exports = model = class model {
                     resolve(result || []);
                 }
             }
-            console.log(key)
             initDatabases('expensemanager').then((db) => {
                 db.collection(instance.tableName).find(key).toArray(readCallback);
             }).catch(err => {

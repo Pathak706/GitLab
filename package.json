@@ -12,6 +12,7 @@
     "bcrypt": "^3.0.2",
     "cluster": "^0.7.7",
     "express": "^4.16.3",
+    "html-pdf": "^2.2.0",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.10",
     "mongodb": "^3.1.3",

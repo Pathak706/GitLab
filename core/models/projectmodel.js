@@ -230,7 +230,6 @@ module.exports = model = class model {
                     resolve(result || []);
                 }
             }
-            console.log(JSON.stringify(key, null, 2));
             initDatabases('expensemanager').then((db) => {
                 db.collection(instance.tableName).find(key).toArray(readCallback);
             }).catch(err => {

@@ -160,7 +160,6 @@ let router = {
                 }]
             })
         };
-        console.log(req.files)
         service.create(req.session, req.body, req.files).then(successCB, next);
     },
     read: (req, res, next) => {

@@ -44,6 +44,7 @@ if (cluster.isMaster) {
     process.on('uncaughtException', function(err) {
         log.error(err);
     });
+    app.use((req,res,next)=>{console.log(req.url);next()});
     initDatabases().then((dbs) => {
         let versionV1Routes = require('./core/routes/v1route.js')(express);
         app.use('/v1', versionV1Routes);
