@@ -17,6 +17,7 @@ module.exports = model = class model {
             instance.dbObject.files = null;
             instance.dbObject.projectName = null;
             instance.dbObject.notes = null;
+            instance.dbObject.geolocation = null;
             instance.dbObject.totalAmount = null;
             instance.dbObject.created_at = null;
             instance.dbObject.updated_at = null;

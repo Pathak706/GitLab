@@ -27,6 +27,7 @@ module.exports = model = class model {
             instance.dbObject.description = null;
             instance.dbObject.amount = null;
             instance.dbObject.gst = null;
+            instance.dbObject.geolocation = null;
 
 
             instance.dbObject.created_at = null;

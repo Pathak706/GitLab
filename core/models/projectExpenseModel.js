@@ -28,6 +28,7 @@ module.exports = model = class model {
             instance.dbObject.quantityRate = null;
             instance.dbObject.expenseType = null;
             instance.dbObject.amount = null;
+            instance.dbObject.geolocation = null;
 
             instance.dbObject.created_at = null;
             instance.dbObject.updated_at = null;

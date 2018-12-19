@@ -26,6 +26,7 @@ module.exports = model = class model {
             instance.dbObject.type = null;
             instance.dbObject.payment = null;
             instance.dbObject.totalFare = null;
+            instance.dbObject.geolocation = null;
             instance.dbObject.localConveyanceDescription = null;
             instance.dbObject.localConveyanceTotal = null;
             instance.dbObject.created_at = null;
