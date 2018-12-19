@@ -131,10 +131,10 @@ let service = {
                 let body = args[1] || {};
                 let projectModel = require('./../models/accomodationExpenseModel');
                 let model = new projectModel(_session);
-                if (!Object.keys(body).length) {
-                    reject([rs.invalidrequest])
-                    return;
-                }
+                // if (!Object.keys(body).length) {
+                //     reject([rs.invalidrequest])
+                //     return;
+                // }
                 model.getNewInstance({});
                 if (!!body.users) {
                     body.users = {
