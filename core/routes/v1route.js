@@ -27,6 +27,7 @@ module.exports = (express) => {
     versionRouter.post('/users', userservice.create);
     versionRouter.get('/users/:userId', userservice.read);
     versionRouter.put('/users/:userId', userservice.update);
+    versionRouter.get('/users', jwt.verifyRequest, userservice.getUsers);
     versionRouter.put('/users/:userId/attributes', jwt.verifyRequest, userservice.updateAttributes);
     versionRouter.delete('/users/:userId/attributes', jwt.verifyRequest, userservice.deleteAttributes);
     //versionRouter.delete('/users/:userId', userservice.delete);

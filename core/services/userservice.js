@@ -290,6 +290,19 @@ let router = {
         };
         req.params.userId = req.session.userId;
         service.getMe(req.session, req.params.userId, req.query).then(successCB, next);
+    },
+    getUsers: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "Users Read Successfully",
+                    code: "READ"
+                }],
+                users: data
+            })
+        };
+        service.getUsers(req.session, req.query).then(successCB, next);
     }
 };
 module.exports.service = service;

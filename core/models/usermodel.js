@@ -249,6 +249,27 @@ module.exports = model = class model {
             });
         });
     }
+    getUsers(query) {
+        let instance = this;
+        return new Promise(function(resolve, reject) {
+            let key = query;
+            let readCallback = (err, result) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(result || []);
+                }
+            }
+            initDatabases('expensemanager').then((db) => {
+                db.collection(instance.tableName).find(key).project({
+                    password: 0,
+                    permissions: 0
+                }).toArray(readCallback);
+            }).catch(err => {
+                reject(err);
+            });
+        });
+    }
     signInRead() {
         let instance = this;
         return new Promise(function(resolve, reject) {
