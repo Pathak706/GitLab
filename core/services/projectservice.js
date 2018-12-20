@@ -28,7 +28,16 @@ let service = {
                     }]);
                 }).catch((err) => {
                     const requiredFields = ['projectId', 'projectName', 'users'];
-                    model.validate(requiredFields).then(() => model.create()).then(onSuccess).catch(onError)
+                    model.getLatestId()
+                        .then((prevId) => {
+                            body.projectId = (parseInt(prevId) + 1).toString();
+                            model.getNewInstance(body);
+                            return model.validate(requiredFields)
+                        }, reject)
+                        .then(() => {
+                            return model.create()
+                        }, reject)
+                        .then(resolve, reject)
                 });
             } catch (e) {
                 console.error(e)

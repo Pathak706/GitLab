@@ -13,6 +13,9 @@ module.exports = model = class model {
             instance.dbObject = {};
             instance.dbObject.projectId = null;
             instance.dbObject.projectName = null;
+            instance.dbObject.projectCategory = null;
+            instance.dbObject.projectClient = null;
+            instance.dbObject.projectLocation = null;
             instance.dbObject.users = null;
             instance.dbObject.attributes = null;
             instance.dbObject.created_at = null;
@@ -90,20 +93,37 @@ module.exports = model = class model {
     create() {
         let instance = this;
         return new Promise(function(resolve, reject) {
-            let createCallback = (err, result) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    let out = instance.getNewInstance(instance.dbObject);
-                    resolve(out.dbObject);
-                }
-            };
+
+
             instance.dbObject.created_at = new Date().getTime();
             instance.dbObject.updated_at = new Date().getTime();
             instance.dbObject.created_by = (instance._session || {}).userId || null;
             instance.dbObject.updated_by = (instance._session || {}).userId || null;
             initDatabases('expensemanager').then((db) => {
-                db.collection(instance.tableName).insertOne(instance.dbObject, createCallback);
+                db.collection(instance.tableName).insertOne(instance.dbObject, (err, result) => {
+                    if (err) {
+                        reject(err)
+                    } else {
+                        db.collection("counters").update({
+                            id: "1"
+                        }, {
+                            "$set": {
+                                id: "1",
+                                projects: instance.dbObject.projectId,
+                            }
+                        }, {
+                            upsert: true
+                        }, (err) => {
+                            if (err) {
+                                reject(err)
+                            } else {
+                                let out = instance.getNewInstance(instance.dbObject);
+                                resolve(out.dbObject);
+                            }
+                        });
+
+                    }
+                });
             }).catch(err => {
                 reject(err);
             });
@@ -188,6 +208,27 @@ module.exports = model = class model {
             }
             initDatabases('expensemanager').then((db) => {
                 db.collection(instance.tableName).remove(key, removeCallback);
+            }).catch(err => {
+                reject(err);
+            });
+        });
+    }
+    getLatestId() {
+        let instance = this;
+        return new Promise(function(resolve, reject) {
+            let key = {
+                id: "1"
+            }
+            let readCallback = (err, result) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    result = result || {};
+                    resolve(result.projects || 0);
+                }
+            }
+            initDatabases('expensemanager').then((db) => {
+                db.collection("counters").findOne(key, readCallback);
             }).catch(err => {
                 reject(err);
             });
