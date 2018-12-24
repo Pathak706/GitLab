@@ -11,6 +11,7 @@ module.exports = model = class model {
         let instance = this;
         try {
             instance.dbObject = {};
+            instance.dbObject.id = null;
             instance.dbObject.projectId = null;
             instance.dbObject.projectName = null;
             instance.dbObject.projectCategory = null;
@@ -93,8 +94,6 @@ module.exports = model = class model {
     create() {
         let instance = this;
         return new Promise(function(resolve, reject) {
-
-
             instance.dbObject.created_at = new Date().getTime();
             instance.dbObject.updated_at = new Date().getTime();
             instance.dbObject.created_by = (instance._session || {}).userId || null;
@@ -104,13 +103,14 @@ module.exports = model = class model {
                     if (err) {
                         reject(err)
                     } else {
+                        let setObj = {
+                            id: "1"
+                        };
+                        setObj[instance.tableName] = instance.dbObject.id;
                         db.collection("counters").update({
                             id: "1"
                         }, {
-                            "$set": {
-                                id: "1",
-                                projects: instance.dbObject.projectId,
-                            }
+                            "$set": setObj
                         }, {
                             upsert: true
                         }, (err) => {
@@ -121,9 +121,29 @@ module.exports = model = class model {
                                 resolve(out.dbObject);
                             }
                         });
-
                     }
                 });
+            }).catch(err => {
+                reject(err);
+            });
+        });
+    }
+    getLatestId() {
+        let instance = this;
+        return new Promise(function(resolve, reject) {
+            let key = {
+                id: "1"
+            }
+            let readCallback = (err, result) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    result = result || {};
+                    resolve(result[instance.tableName] || 0);
+                }
+            }
+            initDatabases('expensemanager').then((db) => {
+                db.collection("counters").findOne(key, readCallback);
             }).catch(err => {
                 reject(err);
             });
@@ -208,27 +228,6 @@ module.exports = model = class model {
             }
             initDatabases('expensemanager').then((db) => {
                 db.collection(instance.tableName).remove(key, removeCallback);
-            }).catch(err => {
-                reject(err);
-            });
-        });
-    }
-    getLatestId() {
-        let instance = this;
-        return new Promise(function(resolve, reject) {
-            let key = {
-                id: "1"
-            }
-            let readCallback = (err, result) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    result = result || {};
-                    resolve(result.projects || 0);
-                }
-            }
-            initDatabases('expensemanager').then((db) => {
-                db.collection("counters").findOne(key, readCallback);
             }).catch(err => {
                 reject(err);
             });

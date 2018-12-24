@@ -30,7 +30,7 @@ let service = {
                     const requiredFields = ['projectId', 'projectName', 'users'];
                     model.getLatestId()
                         .then((prevId) => {
-                            body.projectId = (parseInt(prevId) + 1).toString();
+                            body.id = (parseInt(prevId) + 1).toString();
                             model.getNewInstance(body);
                             return model.validate(requiredFields)
                         }, reject)

@@ -23,7 +23,13 @@ let service = {
                 };
                 model.getNewInstance(body);
                 const requiredFields = ['projectId', 'userId', 'expenseId'];
-                model.validate(requiredFields)
+
+                model.getLatestId()
+                    .then((prevId) => {
+                        body.id = (parseInt(prevId) + 1).toString();
+                        model.getNewInstance(body);
+                        return model.validate(requiredFields)
+                    })
                     .then(() => {
                         return projectservice.read(_session, body.projectId);
                     })
