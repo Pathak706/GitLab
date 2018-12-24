@@ -35,7 +35,13 @@ let service = {
                         }]);
                     }).catch((err) => {
                         const requiredFields = ['userId', 'password', 'firstName', 'lastName', 'gender', 'mobile'];
-                        model.validate(requiredFields).then(() => model.create()).then(onSuccess).catch(onError)
+                        model.getLatestId()
+                            .then((prevId) => {
+                                body.id = (parseInt(prevId) + 1).toString();
+                                model.getNewInstance(body);
+                                return model.validate(requiredFields)
+                            }, reject)
+                            .then(() => model.create()).then(onSuccess).catch(onError)
                     });
                 }).catch(onError);
             } catch (e) {
