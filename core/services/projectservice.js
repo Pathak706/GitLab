@@ -297,7 +297,7 @@ let router = {
                     message: "Project Read Successfully",
                     code: "READ"
                 }],
-                user: data
+                project: data
             })
         };
         service.read(req.session, req.params.projectId).then(successCB, next);
