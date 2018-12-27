@@ -16,20 +16,12 @@ module.exports = model = class model {
             instance.dbObject.userId = null;
             instance.dbObject.projectId = null;
             instance.dbObject.files = null;
+            instance.dbObject.attributes = null;
 
-            instance.dbObject.placeOfVisit = null;
-            instance.dbObject.customerName = null;
-            instance.dbObject.jobNumber = null;
-            instance.dbObject.projectName = null;
-            instance.dbObject.purposeOfVisit = null;
-            instance.dbObject.contactPersonName = null;
             instance.dbObject.expenseDate = null;
-            instance.dbObject.modeOfTransport = null;
-            instance.dbObject.type = null;
-            instance.dbObject.partyName = null;
-            instance.dbObject.totalFare = null;
             instance.dbObject.description = null;
-            instance.dbObject.total = null;
+            instance.dbObject.totalAmount = null;
+            instance.dbObject.totalApprovedAmount = null;
             instance.dbObject.geolocation = null;
 
 

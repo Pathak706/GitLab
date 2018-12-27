@@ -236,9 +236,6 @@ let service = {
                     let expenses = [{
                         type: "Accomodation Expenses",
                         get: require('./accomodationExpenseService').service.getExpenses,
-                    }, {
-                        type: "Project Expenses",
-                        get: require('./projectExpenseService').service.getExpenses,
                     }];
                     return new Promise(async function(resolve, rej) {
                         for (var j = 0; j < projects.length; j++) {
