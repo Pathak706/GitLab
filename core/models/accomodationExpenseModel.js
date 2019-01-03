@@ -22,7 +22,6 @@ module.exports = model = class model {
             instance.dbObject.expenseDate = null;
             instance.dbObject.hotelName = null;
             instance.dbObject.noOfPerson = null;
-            instance.dbObject.bill = null;
             instance.dbObject.totalAmount = null;
             instance.dbObject.totalApprovedAmount = null;
             instance.dbObject.gstBill = null;
