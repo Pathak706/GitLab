@@ -57,6 +57,7 @@ let service = {
                 model.getNewInstance(body);
 
                 function readAllUsers(project) {
+                    let userservice = require('./userservice').service;
                     return new Promise(async function(resolve, reject) {
                         let userObjs = {};
                         let projUser = [];
