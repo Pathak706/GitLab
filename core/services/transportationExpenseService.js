@@ -13,7 +13,7 @@ let service = {
                 let userservice = require('./userservice').service;
                 let model = new projectModel(_session);
                 body.expenseId = body.expenseId || utils.getUniqueId();
-                body.files = files || []
+                body.files = (!!files && !!files.length) ? files : null;
                 let onSuccess = (dbObj) => {
                     resolve(dbObj);
                 };
@@ -21,7 +21,7 @@ let service = {
                     reject(errors);
                 };
                 model.getNewInstance(body);
-                const requiredFields = ['projectId', 'userId', 'expenseId'];
+                const requiredFields = ['files', 'projectId', 'userId', 'expenseId'];
                 model.getLatestId()
                     .then((prevId) => {
                         body.id = (parseInt(prevId) + 1).toString();
