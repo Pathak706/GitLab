@@ -64,13 +64,24 @@ let service = {
                     return Promise.reject([rs.invalidrequest])
                 }
                 model.getNewInstance(body);
-                model.read().then((dbObj) => {
-                    resolve(dbObj);
-                    return;
-                }).catch((errors) => {
-                    reject(errors);
-                    return;
-                })
+                function readUser(expense) {
+                    let userservice = require('./userservice').service;
+                    return new Promise(async function(resolve, reject) {
+                        let u = await userservice.read(_session, expense.userId).catch((e) => {
+                            reject(e);
+                            return;
+                        });
+                        if (!!u) {
+                            delete u.permissions;
+                            expense.user = u;
+                        } else {
+                            reject([rs.invalidrequest]);
+                            return;
+                        }
+                        return resolve(expense);
+                    });
+                }
+                model.read().then(readUser).then(resolve, reject).catch(reject);
             } catch (e) {
                 console.error(e)
                 reject(e);
