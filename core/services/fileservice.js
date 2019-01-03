@@ -5,7 +5,7 @@ var fs = require('fs')
 service.expenseCreateRequest = multer({
     storage: multer.diskStorage({
         destination: function(req, file, callback) {
-            let dir = process.cwd() + '/upload/expenses/';
+            let dir = process.cwd() + '/../upload/expenses/';
             let expenseType = req.url.split("/");
             expenseType = expenseType[expenseType.length - 1];
             dir = dir + expenseType + "/";
@@ -32,7 +32,7 @@ service.expenseCreateRequest = multer({
 service.requestPaymentCreateRequest = multer({
     storage: multer.diskStorage({
         destination: function(req, file, callback) {
-            let dir = process.cwd() + '/upload/requests/';
+            let dir = process.cwd() + '/../upload/requests/';
             let expenseType = req.url.split("/");
             expenseType = expenseType[expenseType.length - 1];
             dir = dir + expenseType + "/";
