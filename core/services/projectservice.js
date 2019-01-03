@@ -55,7 +55,36 @@ let service = {
                 let body = {};
                 body.projectId = projectId || null;
                 model.getNewInstance(body);
-                model.read().then((dbObj) => {
+
+                function readAllUsers(project) {
+                    return new Promise(async function(resolve, reject) {
+                        let userObjs = {};
+                        let projUser = [];
+                        let users = project.users || []
+                        for (var j = 0; j < users.length; j++) {
+                            if (!!userObjs[users[j]]) {
+                                projUser.push(userObjs[users[j]]);
+                            } else {
+                                let u = await userservice.read(_session, users[j]).catch((e) => {
+                                    reject(e);
+                                    return;
+                                });
+                                if (!!u) {
+                                    delete u.permissions;
+                                    userObjs[u.userId] = u;
+                                    projUser.push(u);
+                                } else {
+                                    reject([rs.invalidrequest]);
+                                    return;
+                                }
+                            }
+                        }
+                        project.users = projUser;
+
+                        return resolve(project);
+                    });
+                }
+                model.read().then(readAllUsers).then((dbObj) => {
                     resolve(dbObj);
                     return;
                 }).catch((errors) => {
