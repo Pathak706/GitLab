@@ -148,7 +148,34 @@ let service = {
                     };
                 }
                 delete body.users;
-                model.getExpenses(body).then(resolve, reject);
+
+                function readAllUsers(expenses) {
+                    let userservice = require('./userservice').service;
+                    return new Promise(async function(resolve, reject) {
+                        let userObjs = {};
+                        for (var i = 0; i < expenses.length; i++) {
+                            let userId = expenses[i].userId || null
+                            if (!!userObjs[userId]) {
+                                expenses[i].user = userObjs[userId];
+                            } else {
+                                let u = await userservice.read(_session, userId).catch((e) => {
+                                    reject(e);
+                                    return;
+                                });
+                                if (!!u) {
+                                    delete u.permissions;
+                                    userObjs[u.userId] = u;
+                                    expenses[i].user = u;
+                                } else {
+                                    reject([rs.invalidrequest]);
+                                    return;
+                                }
+                            }
+                        }
+                        return resolve(expenses);
+                    });
+                }
+                model.getExpenses(body).then(readAllUsers).then(resolve, reject);
             } catch (e) {
                 console.error(e)
                 reject(e);
