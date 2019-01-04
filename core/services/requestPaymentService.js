@@ -14,6 +14,7 @@ let service = {
                 let model = new projectModel(_session);
                 body.paymentId = body.paymentId || utils.getUniqueId();
                 body.files = (!!files && !!files.length) ? files : null;
+                body.files = utils.pick(body.files, "mimetype", "filename", "size");
                 let onSuccess = (dbObj) => {
                     resolve(dbObj);
                 };

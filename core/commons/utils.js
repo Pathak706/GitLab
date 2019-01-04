@@ -69,4 +69,9 @@ service.strictBoolean = (value) => {
 service.booleanOrNothing = (value) => {
     return (_.isUndefined(value) || _.isNull(value) || _.isBoolean(value))
 }
+service.pick = (o, ...props) => {
+    return Object.assign({}, ...props.map(prop => ({
+        [prop]: o[prop]
+    })));
+}
 module.exports = service;

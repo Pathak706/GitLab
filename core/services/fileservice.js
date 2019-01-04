@@ -60,12 +60,12 @@ service.expenseReadFileRequest = (req, res, next) => {
     //let expenseId = req.params.expenseId || null;
     let fileName = req.params.filename || null;
     let expenseType = req.url.split("/");
-    res.sendFile(process.cwd() + "/upload/expenses/" + expenseType[2] + "/" + fileName);
+    res.sendFile(process.cwd() + "/../upload/expenses/" + expenseType[2] + "/" + fileName);
 };
 service.requestPaymentReadFileRequest = (req, res, next) => {
     //let paymentId = req.params.paymentId || null;
     let fileName = req.params.filename || null;
     let expenseType = req.url.split("/");
-    res.sendFile(process.cwd() + "/upload/requests/" + expenseType[2] + "/" + fileName);
+    res.sendFile(process.cwd() + "/../upload/requests/" + expenseType[2] + "/" + fileName);
 };
 module.exports = service;
