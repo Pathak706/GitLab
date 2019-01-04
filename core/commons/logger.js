@@ -34,6 +34,12 @@ const logger = createLogger({
         new transports.File({
             filename: process.cwd() + '/logs/info.log',
             level: 'info'
+        }),
+        new transports.Console({
+            level: 'info',
+            handleExceptions: true,
+            json: false,
+            colorize: true,
         })
     ]
 });
