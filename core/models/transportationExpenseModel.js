@@ -15,6 +15,8 @@ module.exports = model = class model {
             instance.dbObject.expenseId = null;
             instance.dbObject.userId = null;
             instance.dbObject.projectId = null;
+            instance.dbObject.userName = null;
+            instance.dbObject.projectName = null;
             instance.dbObject.files = null;
             instance.dbObject.expenseDate = null;
             instance.dbObject.modeOfTransport = null;
