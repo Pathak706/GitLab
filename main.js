@@ -54,6 +54,12 @@ if (cluster.isMaster) {
         app.use(middlewares.error404);
         app.use(middlewares.error40x);
         app.listen(config.port);
+        log.log({
+            level: 'info',
+            message: 'Hello distributed log files!'
+        });
+
+        log.info('Hello again distributed logs');
         log.info("Server Started on " + config.port);
     }).catch(err => {
         console.error('Failed To Connect To Databases')

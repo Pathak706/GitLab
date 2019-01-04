@@ -42,8 +42,8 @@ service.requestPaymentCreateRequest = multer({
             callback(null, dir);
         },
         filename: function(req, file, callback) {
-            //console.log(JSON.stringify(file, null, 2))
-            let filename = "File_" + utils.getUniqueId() + "_" + file.originalname;
+            console.log(JSON.stringify(file, null, 2))
+            let filename = "File_" + utils.getUniqueId() + "_" + (file.originalname).split(" ").join("").split("/").join("");
             callback(null, filename);
         },
         onError: function(err, callback) {
