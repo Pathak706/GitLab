@@ -14,7 +14,9 @@ let service = {
                 let model = new projectModel(_session);
                 body.paymentId = body.paymentId || utils.getUniqueId();
                 body.files = (!!files && !!files.length) ? files : null;
-                body.files = utils.pick(body.files, "mimetype", "filename", "size");
+                (body.files).forEach((obj, index) => {
+    return body.files[index] = utils.pick(obj, "mimetype", "filename", "size");
+});
                 let onSuccess = (dbObj) => {
                     resolve(dbObj);
                 };
