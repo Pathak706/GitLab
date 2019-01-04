@@ -55,43 +55,7 @@ let service = {
                 let body = {};
                 body.projectId = projectId || null;
                 model.getNewInstance(body);
-
-                function readAllUsers(project) {
-                    let userservice = require('./userservice').service;
-                    return new Promise(async function(resolve, reject) {
-                        let userObjs = {};
-                        let projUser = [];
-                        let users = project.users || []
-                        for (var j = 0; j < users.length; j++) {
-                            if (!!userObjs[users[j]]) {
-                                projUser.push(userObjs[users[j]]);
-                            } else {
-                                let u = await userservice.read(_session, users[j]).catch((e) => {
-                                    reject(e);
-                                    return;
-                                });
-                                if (!!u) {
-                                    delete u.permissions;
-                                    userObjs[u.userId] = u;
-                                    projUser.push(u);
-                                } else {
-                                    reject([rs.invalidrequest]);
-                                    return;
-                                }
-                            }
-                        }
-                        project.users = projUser;
-
-                        return resolve(project);
-                    });
-                }
-                model.read().then(readAllUsers).then((dbObj) => {
-                    resolve(dbObj);
-                    return;
-                }).catch((errors) => {
-                    reject(errors);
-                    return;
-                })
+                model.read().then(resolve).catch(reject);
             } catch (e) {
                 console.error(e)
                 reject(e);
@@ -222,37 +186,52 @@ let service = {
                         $in: body.users.split(",")
                     };
                 }
+                model.getProjects(body).then(resolve, reject);
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
+    getProjectUsers: (...args) => {
+        return new Promise(function(resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let projectId = args[1].projectId || null;
+                let projectModel = require('./../models/projectmodel');
+                let model = new projectModel(_session);
+                let body = {};
+                body.projectId = projectId || null;
+                model.getNewInstance(body);
 
-                function readAllUsers(projects) {
+                function readAllUsers(project) {
+                    let userservice = require('./userservice').service;
                     return new Promise(async function(resolve, reject) {
                         let userObjs = {};
-                        for (var i = 0; i < projects.length; i++) {
-                            let projUser = [];
-                            let users = projects[i].users || []
-                            for (var j = 0; j < users.length; j++) {
-                                if (!!userObjs[users[j]]) {
-                                    projUser.push(userObjs[users[j]]);
+                        let projUser = [];
+                        let users = project.users || []
+                        for (var j = 0; j < users.length; j++) {
+                            if (!!userObjs[users[j]]) {
+                                projUser.push(userObjs[users[j]]);
+                            } else {
+                                let u = await userservice.read(_session, users[j]).catch((e) => {
+                                    reject(e);
+                                    return;
+                                });
+                                if (!!u) {
+                                    delete u.permissions;
+                                    userObjs[u.userId] = u;
+                                    projUser.push(u);
                                 } else {
-                                    let u = await userservice.read(_session, users[j]).catch((e) => {
-                                        reject(e);
-                                        return;
-                                    });
-                                    if (!!u) {
-                                        delete u.permissions;
-                                        userObjs[u.userId] = u;
-                                        projUser.push(u);
-                                    } else {
-                                        reject([rs.invalidrequest]);
-                                        return;
-                                    }
+                                    reject([rs.invalidrequest]);
+                                    return;
                                 }
                             }
-                            projects[i].users = projUser;
                         }
-                        return resolve(projects);
+                        return resolve(projUser);
                     });
                 }
-                model.getProjects(body).then(readAllUsers).then(resolve, reject);
+                model.read().then(readAllUsers).then(resolve).catch(reject);
             } catch (e) {
                 console.error(e)
                 reject(e);
@@ -377,6 +356,19 @@ let router = {
             })
         };
         service.getProjects(req.session, req.query).then(successCB, next);
+    },
+    getProjectUsers: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "Projects Users Read Successfully",
+                    code: "READ"
+                }],
+                users: data
+            })
+        };
+        service.getProjectUsers(req.session, req.params).then(successCB, next);
     },
     getProjectPdf: (req, res, next) => {
         let successCB = (data) => {

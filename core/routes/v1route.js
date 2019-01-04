@@ -38,6 +38,7 @@ module.exports = (express) => {
     versionRouter.get('/projects/pdf', jwt.verifyRequest, projectservice.getProjectPdf);
     versionRouter.get('/projects/:projectId', jwt.verifyRequest, projectservice.read);
     versionRouter.put('/projects/:projectId', jwt.verifyRequest, projectservice.update);
+    versionRouter.get('/projects/:projectId/users', jwt.verifyRequest, projectservice.getProjectUsers);
     versionRouter.put('/projects/:projectId/attributes', jwt.verifyRequest, projectservice.updateAttributes);
     versionRouter.delete('/projects/:projectId/attributes', jwt.verifyRequest, projectservice.deleteAttributes);
     /* Project Routes */
