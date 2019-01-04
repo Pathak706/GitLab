@@ -1,7 +1,8 @@
 let service = {};
 var multer = require('multer');
 const utils = require("./../commons/utils");
-var fs = require('fs')
+var fs = require('fs');
+var path = require('path');
 service.expenseCreateRequest = multer({
     storage: multer.diskStorage({
         destination: function(req, file, callback) {
@@ -60,12 +61,12 @@ service.expenseReadFileRequest = (req, res, next) => {
     //let expenseId = req.params.expenseId || null;
     let fileName = req.params.filename || null;
     let expenseType = req.url.split("/");
-    res.sendFile(process.cwd() + "/../upload/expenses/" + expenseType[2] + "/" + fileName);
+    res.sendFile(path.resolve(process.cwd() + "/../upload/expenses/" + expenseType[2] + "/" + fileName));
 };
 service.requestPaymentReadFileRequest = (req, res, next) => {
     //let paymentId = req.params.paymentId || null;
     let fileName = req.params.filename || null;
     let expenseType = req.url.split("/");
-    res.sendFile(process.cwd() + "/../upload/requests/" + expenseType[2] + "/" + fileName);
+    res.sendFile(path.resolve(process.cwd() + "/../upload/requests/" + expenseType[2] + "/" + fileName));
 };
 module.exports = service;
