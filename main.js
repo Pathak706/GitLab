@@ -38,7 +38,9 @@ if (cluster.isMaster) {
     messagePassingApi.refreshActiveWorkerList();
 } else {
     let app = express();
-    app.use(require('body-parser').json());
+    app.use(require('body-parser').json({
+        limit: '10mb'
+    }));
     app.use(middlewares.cors);
     app.use(middlewares.apiTimeout(60000));
     process.on('uncaughtException', function(err) {
