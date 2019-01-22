@@ -288,6 +288,24 @@ let service = {
                     let expenses = [{
                         type: "Accomodation Expenses",
                         get: require('./accomodationExpenseService').service.getExpenses,
+                    }, {
+                        type: "Food And Beverage Expenses",
+                        get: require('./foodAndBeverageExpenseService').service.getExpenses,
+                    }, {
+                        type: "Local Convetance Expenses",
+                        get: require('./localConveyanceExpenseService').service.getExpenses,
+                    }, {
+                        type: "Miscellaneous Expenses",
+                        get: require('./miscellaneousExpenseService').service.getExpenses,
+                    }, {
+                        type: "Purchase GST Expenses",
+                        get: require('./purchaseGstExpenseService').service.getExpenses,
+                    }, {
+                        type: "Transportation Expenses",
+                        get: require('./transportationExpenseService').service.getExpenses,
+                    }, {
+                        type: "Request Payment",
+                        get: require('./requestPaymentService').service.getPayments,
                     }];
                     return new Promise(async function(resolve, rej) {
                         for (var j = 0; j < projects.length; j++) {

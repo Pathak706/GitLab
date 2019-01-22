@@ -15,8 +15,8 @@ let service = {
                 body.paymentId = body.paymentId || utils.getUniqueId();
                 body.files = (!!files && !!files.length) ? files : null;
                 (body.files).forEach((obj, index) => {
-    return body.files[index] = utils.pick(obj, "mimetype", "filename", "size");
-});
+                    return body.files[index] = utils.pick(obj, "mimetype", "filename", "size");
+                });
                 let onSuccess = (dbObj) => {
                     resolve(dbObj);
                 };
