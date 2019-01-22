@@ -21,6 +21,7 @@ service.validate = (token) => {
 };
 service.verifyRequest = (req, res, next) => {
     let token = (req.headers['authorization'] || "").split('Bearer ')[1] || "";
+    token = token || req.query.token || "";
     service.validate(token).then((payload) => {
         req.session = payload;
         next();
