@@ -288,6 +288,7 @@ let service = {
                     let expenses = [{
                         type: "Accomodation Expenses",
                         get: require('./accomodationExpenseService').service.getExpenses,
+                        excel: require('./accomodationExpenseService').service.setExcelData
                     }, {
                         type: "Food And Beverage Expenses",
                         get: require('./foodAndBeverageExpenseService').service.getExpenses,
@@ -311,16 +312,24 @@ let service = {
                         for (var j = 0; j < projects.length; j++) {
                             let projectExpenses = [];
                             for (var i = 0; i < expenses.length; i++) {
+                                let expenseData = await expenses[i].get(args[0], {
+                                    projectId: projects[j].projectId,
+                                    users: args[1].users || null
+                                }).catch(e => {
+                                    return rej(e)
+                                });
+                                expenseData = expenseData || [];
+                                let excelData = "";
+                                if (!!expenses[i].excel) {
+                                    excelData = await expenses[i].excel(args[0], expenseData).catch(e => {
+                                        return rej(e)
+                                    });
+                                }
                                 let ex = {
                                     type: expenses[i].type,
-                                    data: await expenses[i].get(args[0], {
-                                        projectId: projects[j].projectId,
-                                        users: args[1].users || null
-                                    }).catch(e => {
-                                        return rej(e)
-                                    })
+                                    data: excelData
                                 };
-                                ex.data = ex.data || [];
+                                ex.data = ex.data || "";
                                 projectExpenses.push(ex);
                             };
                             projects[j].expenses = projectExpenses
