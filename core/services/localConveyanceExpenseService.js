@@ -15,8 +15,8 @@ let service = {
                 body.expenseId = body.expenseId || utils.getUniqueId();
                 body.files = (!!files && !!files.length) ? files : null;
                 (body.files).forEach((obj, index) => {
-    return body.files[index] = utils.pick(obj, "mimetype", "filename", "size");
-});
+                    return body.files[index] = utils.pick(obj, "mimetype", "filename", "size");
+                });
                 let onSuccess = (dbObj) => {
                     resolve(dbObj);
                 };
@@ -206,6 +206,27 @@ let service = {
             }
         });
     },
+    setExcelData: (...args) => {
+        return new Promise(function(resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let expenses = args[1] || {};
+                let header = "Id,User,Description,No of Bills,Amount,Approved Amount,Status";
+                let csv = [header];
+                for (var i = 0; i < expenses.length; i++) {
+                    let projectModel = require('./../models/accomodationExpenseModel');
+                    let model = new projectModel(_session);
+                    model.getNewInstance(expenses[i]);
+                    csv.push(`${model.getAttribute("id") || ""},${model.getAttribute("userName") || ""},${model.getAttribute("description") || ""},Field Unknown,${model.getAttribute("totalAmount") || ""},${model.getAttribute("totalApprovedAmount") || ""},Status Unknown`)
+                }
+                resolve(csv.join("\n"));
+                return;
+            } catch (e) {
+                reject(e);
+                return;
+            }
+        });
+    }
 }
 let router = {
     create: (req, res, next) => {

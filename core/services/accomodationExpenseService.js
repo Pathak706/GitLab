@@ -213,7 +213,7 @@ let service = {
             try {
                 let _session = args[0] || {};
                 let expenses = args[1] || {};
-                let header = "Id,	User,	Hotel Name,	No. of Person,	No of bills,	GST Bill,	Amount,	Approved Amount,	Status";
+                let header = "Id,User,Hotel Name,No. of Person,No of bills,GST Bill,Amount,Approved Amount,Status";
                 let csv = [header];
                 for (var i = 0; i < expenses.length; i++) {
                     let projectModel = require('./../models/accomodationExpenseModel');
