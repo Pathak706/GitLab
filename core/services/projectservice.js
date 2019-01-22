@@ -280,6 +280,49 @@ let service = {
                 reject(e);
             }
         });
+    },
+    getProjectExcel: (...args) => {
+        return new Promise(function(resolve, reject) {
+            try {
+                function getExpensesOfEachType(projects) {
+                    let expenses = [{
+                        type: "Accomodation Expenses",
+                        get: require('./accomodationExpenseService').service.getExpenses,
+                    }];
+                    return new Promise(async function(resolve, rej) {
+                        for (var j = 0; j < projects.length; j++) {
+                            let projectExpenses = [];
+                            for (var i = 0; i < expenses.length; i++) {
+                                let ex = {
+                                    type: expenses[i].type,
+                                    data: await expenses[i].get(args[0], {
+                                        projectId: projects[j].projectId,
+                                        users: args[1].users || null
+                                    }).catch(e => {
+                                        return rej(e)
+                                    })
+                                };
+                                ex.data = ex.data || [];
+                                projectExpenses.push(ex);
+                            };
+                            projects[j].expenses = projectExpenses
+                        }
+                        resolve(projects);
+                    });
+                }
+                service.getProjects(args[0], args[1])
+                    .then(getExpensesOfEachType)
+                    .then(require('./formatExcelService'))
+                    .then((csvData) => {
+                        return require('./pdfservice')(htmlData, 'utf8');
+                    })
+                    .then(resolve)
+                    .catch(reject);
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
     }
 }
 let router = {
@@ -370,9 +413,9 @@ let router = {
         };
         service.getProjectUsers(req.session, req.params).then(successCB, next);
     },
-    getProjectPdf: (req, res, next) => {
+    getProjectExcel: (req, res, next) => {
         let successCB = (data) => {
-            res.header('Content-type', 'application/pdf');
+            //res.header('Content-type', 'application/pdf');
             res.sendFile(data);
             return;
         };

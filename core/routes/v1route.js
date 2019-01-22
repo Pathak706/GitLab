@@ -35,7 +35,8 @@ module.exports = (express) => {
     /* Project Routes */
     versionRouter.post('/projects', jwt.verifyRequest, projectservice.create);
     versionRouter.get('/projects', jwt.verifyRequest, projectservice.getProjects);
-    versionRouter.get('/projects/pdf', jwt.verifyRequest, projectservice.getProjectPdf);
+    versionRouter.get('/projects/export/excel', jwt.verifyRequest, projectservice.getProjectExcel);
+    //versionRouter.get('/projects/pdf', jwt.verifyRequest, projectservice.getProjectPdf);
     versionRouter.get('/projects/:projectId', jwt.verifyRequest, projectservice.read);
     versionRouter.put('/projects/:projectId', jwt.verifyRequest, projectservice.update);
     versionRouter.get('/projects/:projectId/users', jwt.verifyRequest, projectservice.getProjectUsers);
