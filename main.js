@@ -48,7 +48,7 @@ if (cluster.isMaster) {
     });
     app.use((req, res, next) => {
         console.log(req.method + " : " + req.url);
-        console.log(req.body, req.params, req.headers, req.query, req.files, req.text)
+        //console.log(req.body, req.params, req.headers, req.query, req.files, req.text)
         next()
     });
     initDatabases().then((dbs) => {

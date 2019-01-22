@@ -313,9 +313,9 @@ let service = {
                 service.getProjects(args[0], args[1])
                     .then(getExpensesOfEachType)
                     .then(require('./formatExcelService'))
-                    .then((csvData) => {
-                        return require('./pdfservice')(htmlData, 'utf8');
-                    })
+                    // .then((csvData) => {
+                    //     return require('./pdfservice')(htmlData, 'utf8');
+                    // })
                     .then(resolve)
                     .catch(reject);
             } catch (e) {
@@ -416,10 +416,10 @@ let router = {
     getProjectExcel: (req, res, next) => {
         let successCB = (data) => {
             //res.header('Content-type', 'application/pdf');
-            res.sendFile(data);
+            res.send(data);
             return;
         };
-        service.getProjectPdf(req.session, req.query).then(successCB, next);
+        service.getProjectExcel(req.session, req.query).then(successCB, next);
     }
 };
 module.exports.service = service;
