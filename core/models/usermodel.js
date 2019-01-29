@@ -20,6 +20,7 @@ module.exports = model = class model {
             instance.dbObject.email = null;
             instance.dbObject.gender = null;
             instance.dbObject.password = null;
+            instance.dbObject.passwordResetAt = null;
             instance.dbObject.attributes = null;
             instance.dbObject.created_at = null;
             instance.dbObject.updated_at = null;
