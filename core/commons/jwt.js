@@ -28,6 +28,7 @@ service.verifyRequest = (req, res, next) => {
         let userservice = require('./../services/userservice').service;
         return userservice.read(req.session, payload.userId)
     }).then((dbObj) => {
+        console.log(dbObj.passwordResetAt, req.session.created_at)
         if (dbObj.passwordResetAt <= req.session.created_at /*&& !dbObj.isDeleted*/ ) {
             next();
         } else {
