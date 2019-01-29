@@ -87,7 +87,11 @@ let service = {
                         throw rs.signin;
                     }
                 }).then((result) => {
-                    return pv.create(body.newPassword);
+                    if (!!result) {
+                        throw rs.invalidrequest;
+                    } else {
+                        return pv.create(body.newPassword);
+                    }
                 }).then((hashedPassword) => {
                     return model.update({
                         password: hashedPassword,
