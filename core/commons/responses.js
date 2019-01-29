@@ -15,6 +15,10 @@ module.exports = {
         code: "SIGNINERROR",
         message: "Invalid Credentials"
     },
+    tokenerror: {
+        code: "TOKENERROR",
+        message: "Invalid Authorization"
+    },
     userexists: {
         code: "USEREXISTS",
         message: "User Exists"

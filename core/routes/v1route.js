@@ -19,6 +19,8 @@ module.exports = (express) => {
 
     /* Auth Routes */
     versionRouter.post('/auth/signin', authservice.signin);
+    versionRouter.post('/auth/resetpassword', authservice.resetPassword);
+    versionRouter.post('/auth/changepassword', authservice.changePassword);
     /* Auth Routes */
 
 
