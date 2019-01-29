@@ -81,16 +81,18 @@ let service = {
                 }
                 model.getNewInstance(body);
                 model.readFull().then((dbObj) => {
+                    console.log(body.oldPassword, dbObj.password);
                     if (!!dbObj) {
                         return pv.verify(body.oldPassword, dbObj.password);
                     } else {
                         throw rs.signin;
                     }
                 }).then((result) => {
+                    console.log(result);
                     if (!!result) {
-                        throw rs.invalidrequest;
-                    } else {
                         return pv.create(body.newPassword);
+                    } else {
+                        throw rs.invalidrequest;
                     }
                 }).then((hashedPassword) => {
                     return model.update({
