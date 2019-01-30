@@ -345,7 +345,7 @@ let service = {
                         resolve(projects);
                     });
                 }
-                if (!args[1].projectId) {
+                if (!args[1].projectId || !args[1].type || args[1].type !== "xlsx") {
                     reject([rs.invalidrequest]);
                     return;
                 }

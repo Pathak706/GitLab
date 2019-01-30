@@ -37,7 +37,16 @@ module.exports = (express) => {
     /* Project Routes */
     versionRouter.post('/projects', jwt.verifyRequest, projectservice.create);
     versionRouter.get('/projects', jwt.verifyRequest, projectservice.getProjects);
-    versionRouter.get('/projects/export/excel', jwt.verifyRequest, projectservice.getProjectExcel);
+    versionRouter.get('/projects/export', jwt.verifyRequest, projectservice.getProjectExcel);
+    versionRouter.delete('/projects/xlsx/:filename', jwt.verifyRequest, (req, res, next) => {
+        if (!req.params.filename) {
+            next([])
+            return;
+        } else {
+            res.sendFile(require("path").resolve(process.cwd() + '/../xlsx/' + req.params.filename));
+            return
+        }
+    });
     //versionRouter.get('/projects/pdf', jwt.verifyRequest, projectservice.getProjectPdf);
     versionRouter.get('/projects/:projectId', jwt.verifyRequest, projectservice.read);
     versionRouter.put('/projects/:projectId', jwt.verifyRequest, projectservice.update);
