@@ -289,7 +289,7 @@ let service = {
                         type: "Accomodation Expenses",
                         get: require('./accomodationExpenseService').service.getExpenses,
                         excel: require('./accomodationExpenseService').service.setExcelData
-                    }, {
+                    }/*, {
                         type: "Food And Beverage Expenses",
                         get: require('./foodAndBeverageExpenseService').service.getExpenses,
                         excel: require('./foodAndBeverageExpenseService').service.setExcelData
@@ -313,7 +313,7 @@ let service = {
                         type: "Request Payment",
                         get: require('./requestPaymentService').service.getPayments,
                         excel: require('./requestPaymentService').service.setExcelData
-                    }];
+                    }*/];
                     return new Promise(async function(resolve, rej) {
                         for (var j = 0; j < projects.length; j++) {
                             let projectExpenses = [];
@@ -342,6 +342,10 @@ let service = {
                         }
                         resolve(projects);
                     });
+                }
+                if (!args[1].projectId) {
+                    reject([rs.invalidrequest]);
+                    return;
                 }
                 service.getProjects(args[0], args[1])
                     .then(getExpensesOfEachType)

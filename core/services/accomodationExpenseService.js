@@ -213,15 +213,34 @@ let service = {
             try {
                 let _session = args[0] || {};
                 let expenses = args[1] || {};
-                let header = "Id,User,Hotel Name,No. of Person,No of bills,GST Bill,Amount,Approved Amount,Status";
-                let csv = [header];
+                let template = {}
+                template["Id"] = "Id";
+                template["User"] = "User";
+                template["Hotel Name"] = "Hotel Name";
+                template["No. of Person"] = "No. of Person";
+                template["No of bills"] = "No of bills";
+                template["GST Bill"] = "GST Bill";
+                template["Amount"] = "Amount";
+                template["Approved Amount"] = "Approved Amount";
+                template["Status"] = "Status";
+                let csv = [];
                 for (var i = 0; i < expenses.length; i++) {
                     let projectModel = require('./../models/accomodationExpenseModel');
                     let model = new projectModel(_session);
                     model.getNewInstance(expenses[i]);
-                    csv.push(`${model.getAttribute("id") || ""},${model.getAttribute("userName") || ""},${model.getAttribute("noOfPerson") || ""},Field Unknown,${model.getAttribute("gstBill") || ""},${model.getAttribute("totalAmount") || ""},${model.getAttribute("totalApprovedAmount") || ""},Status Unknown`)
+                    let obj = utils.clone(template);
+                    obj["Id"] = model.getAttribute("id") || "";
+                    obj["User"] = model.getAttribute("userName") || "";
+                    obj["Hotel Name"] = model.getAttribute("hotelName") || "";
+                    obj["No. of Person"] = model.getAttribute("noOfPerson") || "";
+                    obj["No of bills"] = "Field Unknown";
+                    obj["GST Bill"] = model.getAttribute("gstBill") || "";
+                    obj["Amount"] = model.getAttribute("totalAmount") || "";
+                    obj["Approved Amount"] = model.getAttribute("totalApprovedAmount") || "";
+                    obj["Status"] = "Status Unknown";
+                    csv.push(obj)
                 }
-                resolve(csv.join("\n"));
+                resolve(csv);
                 return;
             } catch (e) {
                 reject(e);
