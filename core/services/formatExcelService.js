@@ -21,10 +21,10 @@ function formatExcel(projects) {
         for (var i = 0; i < projects.length; i++) {
             let projectId = projects[i].projectId || null;
             let expenses = projects[i].expenses || [];
+            projects[i].excelData = projects[i].excelData || {};
             for (var j = 0; j < expenses.length; j++) {
                 var xls = json2xls(expenses[j].data);
                 let filePath = await writeExcel(projectId, expenses[j].type, xls);
-                projects[i].excelData = projects[i].excelData || {};
                 projects[i].excelData[expenses[j].type] = filePath;
             }
         }
