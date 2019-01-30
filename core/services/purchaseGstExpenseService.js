@@ -211,8 +211,6 @@ let service = {
             try {
                 let _session = args[0] || {};
                 let expenses = args[1] || {};
-
-                let header = "Id,User,Description,No of Bills,GST Bill,Amount,Approved Amount,Status";
                 let template = {}
                 template["Id"] = "Id";
                 template["User"] = "User";
@@ -238,7 +236,7 @@ let service = {
                     obj["Status"] = "Status Unknown";
                     csv.push(obj)
                 }
-                resolve(csv.join("\n"));
+                resolve(csv);
                 return;
             } catch (e) {
                 reject(e);
