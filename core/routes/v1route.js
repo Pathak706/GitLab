@@ -38,7 +38,7 @@ module.exports = (express) => {
     versionRouter.post('/projects', jwt.verifyRequest, projectservice.create);
     versionRouter.get('/projects', jwt.verifyRequest, projectservice.getProjects);
     versionRouter.get('/projects/export', jwt.verifyRequest, projectservice.getProjectExcel);
-    versionRouter.delete('/projects/xlsx/:filename', jwt.verifyRequest, (req, res, next) => {
+    versionRouter.get('/projects/xlsx/:filename', jwt.verifyRequest, (req, res, next) => {
         if (!req.params.filename) {
             next([])
             return;
