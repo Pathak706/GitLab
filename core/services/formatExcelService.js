@@ -28,7 +28,8 @@ function formatExcel(projects) {
                 projects[i].excelData[expenses[j].type] = filePath;
             }
         }
-        resolve(projects[0].excelData);
+        let out = !!projects[0] ? projects[0].excelData : {};
+        resolve(out);
     });
 }
 module.exports = formatExcel;

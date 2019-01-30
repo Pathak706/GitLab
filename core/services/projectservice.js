@@ -306,6 +306,7 @@ let service = {
                     reject([rs.invalidrequest]);
                     return;
                 }
+                delete args[1].type;
                 service.getProjects(args[0], args[1])
                     .then(getExpensesOfEachType)
                     .then(require('./formatExcelService'))
