@@ -214,16 +214,34 @@ let service = {
             try {
                 let _session = args[0] || {};
                 let expenses = args[1] || {};
-
-                let header = "Id,User,Mode of Transport,Type,Payment,No of bills,Amount,Approved Amount,Status";
-                let csv = [header];
+                let template = {}
+                template["Id"] = "Id";
+                template["User"] = "User";
+                template["Mode of Transport"] = "Mode of Transport";
+                template["Type"] = "Type";
+                template["Payment"] = "Payment";
+                template["No of bills"] = "No of bills";
+                template["Amount"] = "Amount";
+                template["Approved Amount"] = "Approved Amount";
+                template["Status"] = "Status";
+                let csv = [];
                 for (var i = 0; i < expenses.length; i++) {
                     let projectModel = require('./../models/accomodationExpenseModel');
                     let model = new projectModel(_session);
                     model.getNewInstance(expenses[i]);
-                    csv.push(`${model.getAttribute("id") || ""},${model.getAttribute("userName") || ""},${model.getAttribute("modeOfTransport") || ""},Field Unknown,Field Unknown,${model.getAttribute("totalAmount") || ""},${model.getAttribute("totalApprovedAmount") || ""},Status Unknown`)
+                    let obj = utils.clone(template);
+                    obj["Id"] = model.getAttribute("id") || "";
+                    obj["User"] = model.getAttribute("userName") || "";
+                    obj["Mode of Transport"] = model.getAttribute("modeOfTransport") || "";
+                    obj["Type"] = "Field Unknown";
+                    obj["Payment"] = "Field Unknown";
+                    obj["No of bills"] = "Field Unknown";
+                    obj["Amount"] = model.getAttribute("totalAmount") || "";
+                    obj["Approved Amount"] = model.getAttribute("totalApprovedAmount") || "";
+                    obj["Status"] = "Status Unknown";
+                    csv.push(obj)
                 }
-                resolve(csv.join("\n"));
+                resolve(csv);
                 return;
             } catch (e) {
                 reject(e);

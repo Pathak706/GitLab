@@ -211,15 +211,33 @@ let service = {
             try {
                 let _session = args[0] || {};
                 let expenses = args[1] || {};
+                let template = {}
+                template["Id"] = "Id";
+                template["User"] = "User";
+                template["Type"] = "Type";
+                template["No. of Person"] = "No. of Person";
+                template["No of bills"] = "No of bills";
+                template["Amount"] = "Amount";
+                template["Approved Amount"] = "Approved Amount";
+                template["Status"] = "Status";
                 let header = "Id,User,Type,No. of Person,No of Bills,Amount,Approved Amount,Status";
-                let csv = [header];
+                let csv = [];
                 for (var i = 0; i < expenses.length; i++) {
                     let projectModel = require('./../models/accomodationExpenseModel');
                     let model = new projectModel(_session);
                     model.getNewInstance(expenses[i]);
-                    csv.push(`${model.getAttribute("id") || ""},${model.getAttribute("userName") || ""},${model.getAttribute("type") || ""},${model.getAttribute("noOfPerson") || ""},Field Unknown,${model.getAttribute("totalAmount") || ""},${model.getAttribute("totalApprovedAmount") || ""},Status Unknown`)
+                    let obj = utils.clone(template);
+                    obj["Id"] = model.getAttribute("id") || "";
+                    obj["User"] = model.getAttribute("userName") || "";
+                    obj["Type"] = model.getAttribute("type") || "";
+                    obj["No. of Person"] = model.getAttribute("noOfPerson") || "";
+                    obj["No of bills"] = "Field Unknown";
+                    obj["Amount"] = model.getAttribute("totalAmount") || "";
+                    obj["Approved Amount"] = model.getAttribute("totalApprovedAmount") || "";
+                    obj["Status"] = "Status Unknown";
+                    csv.push(obj)
                 }
-                resolve(csv.join("\n"));
+                resolve(csv);
                 return;
             } catch (e) {
                 reject(e);

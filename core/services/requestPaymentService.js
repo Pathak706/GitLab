@@ -212,12 +212,28 @@ let service = {
                 let _session = args[0] || {};
                 let expenses = args[1] || {};
                 let header = "Id,User,Description,Attachment,Amount,Approved Amount,Status";
-                let csv = [header];
+                let template = {}
+                template["Id"] = "Id";
+                template["User"] = "User";
+                template["Description"] = "Description";
+                template["Attachment"] = "Attachment";
+                template["Amount"] = "Amount";
+                template["Approved Amount"] = "Approved Amount";
+                template["Status"] = "Status";
+                let csv = [];
                 for (var i = 0; i < expenses.length; i++) {
                     let projectModel = require('./../models/accomodationExpenseModel');
                     let model = new projectModel(_session);
                     model.getNewInstance(expenses[i]);
-                    csv.push(`${model.getAttribute("id") || ""},${model.getAttribute("userName") || ""},${model.getAttribute("description") || ""},Field Unknown,${model.getAttribute("totalAmount") || ""},${model.getAttribute("totalApprovedAmount") || ""},Status Unknown`)
+                    let obj = utils.clone(template);
+                    obj["Id"] = model.getAttribute("id") || "";
+                    obj["User"] = model.getAttribute("userName") || "";
+                    obj["Description"] = model.getAttribute("description") || "";
+                    obj["Attachment"] = "Field Unknown";
+                    obj["Amount"] = model.getAttribute("totalAmount") || "";
+                    obj["Approved Amount"] = model.getAttribute("totalApprovedAmount") || "";
+                    obj["Status"] = "Status Unknown";
+                    csv.push(obj)
                 }
                 resolve(csv.join("\n"));
                 return;
