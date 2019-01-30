@@ -211,8 +211,6 @@ let service = {
             try {
                 let _session = args[0] || {};
                 let expenses = args[1] || {};
-                let header = "Id,User,Type,Description,No of Bills,Amount,Approved Amount,Status";
-                let csv = [header];
                 let template = {}
                 template["Id"] = "Id";
                 template["User"] = "User";
