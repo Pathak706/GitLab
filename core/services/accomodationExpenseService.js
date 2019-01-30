@@ -148,6 +148,7 @@ let service = {
                     };
                 }
                 delete body.users;
+                console.log(body)
                 model.getExpenses(body).then(resolve, reject);
             } catch (e) {
                 console.error(e)

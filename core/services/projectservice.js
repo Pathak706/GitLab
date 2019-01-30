@@ -248,30 +248,30 @@ let service = {
                             excel: require('./accomodationExpenseService').service.setExcelData
                         }
                         /*, {
-                                                type: "Food And Beverage Expenses",
-                                                get: require('./foodAndBeverageExpenseService').service.getExpenses,
-                                                excel: require('./foodAndBeverageExpenseService').service.setExcelData
-                                            }, {
-                                                type: "Local Convetance Expenses",
-                                                get: require('./localConveyanceExpenseService').service.getExpenses,
-                                                excel: require('./localConveyanceExpenseService').service.setExcelData
-                                            }, {
-                                                type: "Miscellaneous Expenses",
-                                                get: require('./miscellaneousExpenseService').service.getExpenses,
-                                                excel: require('./miscellaneousExpenseService').service.setExcelData
-                                            }, {
-                                                type: "Purchase GST Expenses",
-                                                get: require('./purchaseGstExpenseService').service.getExpenses,
-                                                excel: require('./purchaseGstExpenseService').service.setExcelData
-                                            }, {
-                                                type: "Transportation Expenses",
-                                                get: require('./transportationExpenseService').service.getExpenses,
-                                                excel: require('./transportationExpenseService').service.setExcelData
-                                            }, {
-                                                type: "Request Payment",
-                                                get: require('./requestPaymentService').service.getPayments,
-                                                excel: require('./requestPaymentService').service.setExcelData
-                                            }*/
+                                type: "Food And Beverage Expenses",
+                                get: require('./foodAndBeverageExpenseService').service.getExpenses,
+                                excel: require('./foodAndBeverageExpenseService').service.setExcelData
+                            }, {
+                                type: "Local Convetance Expenses",
+                                get: require('./localConveyanceExpenseService').service.getExpenses,
+                                excel: require('./localConveyanceExpenseService').service.setExcelData
+                            }, {
+                                type: "Miscellaneous Expenses",
+                                get: require('./miscellaneousExpenseService').service.getExpenses,
+                                excel: require('./miscellaneousExpenseService').service.setExcelData
+                            }, {
+                                type: "Purchase GST Expenses",
+                                get: require('./purchaseGstExpenseService').service.getExpenses,
+                                excel: require('./purchaseGstExpenseService').service.setExcelData
+                            }, {
+                                type: "Transportation Expenses",
+                                get: require('./transportationExpenseService').service.getExpenses,
+                                excel: require('./transportationExpenseService').service.setExcelData
+                            }, {
+                                type: "Request Payment",
+                                get: require('./requestPaymentService').service.getPayments,
+                                excel: require('./requestPaymentService').service.setExcelData
+                            }*/
                     ];
                     return new Promise(async function(resolve, rej) {
                         for (var j = 0; j < projects.length; j++) {
