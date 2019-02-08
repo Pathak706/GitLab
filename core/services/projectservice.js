@@ -12,7 +12,7 @@ let service = {
                 let projectModel = require('./../models/projectmodel');
                 let model = new projectModel(_session);
                 body.projectId = body.projectId || utils.getUniqueId();
-                body.projectName = !!body.projectName ? _.capitalize(body.projectName) : "";
+                body.projectName = body.projectName || "";
                 let onSuccess = (dbObj) => {
                     resolve(dbObj);
                 };
