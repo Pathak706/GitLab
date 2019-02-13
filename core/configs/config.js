@@ -11,5 +11,3 @@ module.exports = {
         }]
     }
 }
-
-db.createUser({user: "ndttExpenseManager",pwd: "ndttPassword@$^Expense",roles: [ { role: "readWrite", db: "expensemanager" } ]})

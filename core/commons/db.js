@@ -4,8 +4,8 @@ var f = require('util').format;
 let connStrings = [];
 for (var i = 0; i < config.db.databases.length; i++) {
     let db = config.db.databases[i];
-    //    connStrings.push(f(db.endpoint + '/' + db.dbname.toLowerCase() + '?authMechanism=%s', encodeURIComponent(db.username), encodeURIComponent(db.password), db.authMechanism));
-    connStrings.push("mongodb://localhost:27017/" + db.dbname.toLowerCase())
+    connStrings.push(f(db.endpoint + '/' + db.dbname.toLowerCase() + '?authMechanism=%s', encodeURIComponent(db.username), encodeURIComponent(db.password), db.authMechanism));
+    //connStrings.push("mongodb://localhost:27017/" + db.dbname.toLowerCase())
 }
 let databases = null;
 
