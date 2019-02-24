@@ -153,7 +153,7 @@ function formatExcel(projects) {
                 continue;
             }
         }
-        let path = await writeExcel(projectId, workbook);
+        let path = await writeExcel(project.projectId, workbook);
         //let out = !!projects[0] ? projects[0].excelData : {};
         resolve(path || 'noPath');
     });
