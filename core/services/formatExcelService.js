@@ -4,7 +4,7 @@ var Excel = require('exceljs');
 function writeExcel(_id, _data) {
     return new Promise(function(resolve, reject) {
         let fn = _id + '.xlsx';
-        _data.xlsx.writeFile(fn)
+        _data.xlsx.writeFile(process.cwd() + '/../xlsx/' +fn)
             .then(function() {
                 resolve("v1/projects/xlsx/" + fn);
             }).catch(e => reject(err));
