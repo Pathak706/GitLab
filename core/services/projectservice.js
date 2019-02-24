@@ -251,7 +251,7 @@ let service = {
                             get: require('./foodAndBeverageExpenseService').service.getExpenses,
                             excel: require('./foodAndBeverageExpenseService').service.setExcelData
                         }, {
-                            type: "Local Convetance Expenses",
+                            type: "Local Conveyance Expenses",
                             get: require('./localConveyanceExpenseService').service.getExpenses,
                             excel: require('./localConveyanceExpenseService').service.setExcelData
                         }, {
