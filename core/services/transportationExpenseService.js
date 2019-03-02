@@ -13,7 +13,7 @@ let service = {
                 let userservice = require('./userservice').service;
                 let model = new projectModel(_session);
                 body.expenseId = body.expenseId || utils.getUniqueId();
-                body.files = (!!files && !!files.length) ? files : null;
+                body.files = (!!files && !!files.length) ? files : [];
                 if (!body.files) {
                     return reject([rs.invalidrequest]);
                 }

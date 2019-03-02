@@ -13,7 +13,7 @@ let service = {
                 let userservice = require('./userservice').service;
                 let model = new projectModel(_session);
                 body.paymentId = body.paymentId || utils.getUniqueId();
-                body.files = (!!files && !!files.length) ? files : null;
+                body.files = (!!files && !!files.length) ? files : [];
                 (body.files).forEach((obj, index) => {
                     return body.files[index] = utils.pick(obj, "mimetype", "filename", "size");
                 });
