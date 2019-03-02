@@ -10,6 +10,7 @@ module.exports = model = class model {
     getNewInstance(values) {
         let instance = this;
         try {
+
             instance.dbObject = {};
             instance.dbObject.id = null;
             instance.dbObject.expenseId = null;
@@ -22,6 +23,8 @@ module.exports = model = class model {
             instance.dbObject.expenseDate = null;
 
             instance.dbObject.type = null;
+            instance.dbObject.gstBill = null;
+            instance.dbObject.comments = null;
             instance.dbObject.description = null;
             instance.dbObject.totalAmount = null;
             instance.dbObject.totalApprovedAmount = null;

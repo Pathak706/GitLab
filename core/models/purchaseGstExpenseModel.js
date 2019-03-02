@@ -25,6 +25,7 @@ module.exports = model = class model {
             instance.dbObject.totalAmount = null;
             instance.dbObject.totalApprovedAmount = null;
             instance.dbObject.gstBill = null;
+            instance.dbObject.comments = null;
             instance.dbObject.geolocation = null;
 
 

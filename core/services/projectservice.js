@@ -242,7 +242,11 @@ let service = {
         return new Promise(function(resolve, reject) {
             try {
                 function getExpensesOfEachType(projects) {
-                    let expenses = [{
+                    let expenses = [ {
+                        type: "Transportation Expenses",
+                        get: require('./transportationExpenseService').service.getExpenses,
+                        excel: require('./transportationExpenseService').service.setExcelData
+                    },{
                             type: "Accomodation Expenses",
                             get: require('./accomodationExpenseService').service.getExpenses,
                             excel: require('./accomodationExpenseService').service.setExcelData
@@ -250,10 +254,6 @@ let service = {
                             type: "Food And Beverage Expenses",
                             get: require('./foodAndBeverageExpenseService').service.getExpenses,
                             excel: require('./foodAndBeverageExpenseService').service.setExcelData
-                        }, {
-                            type: "Local Conveyance Expenses",
-                            get: require('./localConveyanceExpenseService').service.getExpenses,
-                            excel: require('./localConveyanceExpenseService').service.setExcelData
                         }, {
                             type: "Miscellaneous Expenses",
                             get: require('./miscellaneousExpenseService').service.getExpenses,
@@ -263,11 +263,11 @@ let service = {
                             get: require('./purchaseGstExpenseService').service.getExpenses,
                             excel: require('./purchaseGstExpenseService').service.setExcelData
                         }, {
-                            type: "Transportation Expenses",
-                            get: require('./transportationExpenseService').service.getExpenses,
-                            excel: require('./transportationExpenseService').service.setExcelData
+                            type: "Local Conveyance Expenses",
+                            get: require('./localConveyanceExpenseService').service.getExpenses,
+                            excel: require('./localConveyanceExpenseService').service.setExcelData
                         }, {
-                            type: "Request Payment",
+                            type: "Payment Requests",
                             get: require('./requestPaymentService').service.getPayments,
                             excel: require('./requestPaymentService').service.setExcelData
                         }

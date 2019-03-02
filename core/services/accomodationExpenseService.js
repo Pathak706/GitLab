@@ -234,11 +234,11 @@ let service = {
                     obj["User"] = model.getAttribute("userName") || "";
                     obj["Hotel Name"] = model.getAttribute("hotelName") || "";
                     obj["No. of Person"] = model.getAttribute("noOfPerson") || "";
-                    obj["No of bills"] = "Field Unknown";
+                    obj["No of bills"] = (model.getAttribute("files") || []).length;
                     obj["GST Bill"] = model.getAttribute("gstBill") || "";
                     obj["Amount"] = model.getAttribute("totalAmount") || "";
                     obj["Approved Amount"] = model.getAttribute("totalApprovedAmount") || "";
-                    obj["Status"] = "Status Unknown";
+                    obj["Status"] = (model.getAttribute("attributes") || {}).approved || "" ;
                     csv.push(obj)
                 }
                 resolve(csv);

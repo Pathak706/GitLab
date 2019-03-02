@@ -28,6 +28,8 @@ module.exports = model = class model {
             instance.dbObject.totalApprovedAmount = null;
             instance.dbObject.gstBill = null;
             instance.dbObject.geolocation = null;
+            instance.dbObject.comments = null;
+            
 
             instance.dbObject.created_at = null;
             instance.dbObject.updated_at = null;

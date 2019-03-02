@@ -221,17 +221,17 @@ let service = {
                 template["Status"] = "Status";
                 let csv = [];
                 for (var i = 0; i < expenses.length; i++) {
-                    let projectModel = require('./../models/accomodationExpenseModel');
+                    let projectModel = require('./../models/requestPaymentModel');
                     let model = new projectModel(_session);
                     model.getNewInstance(expenses[i]);
                     let obj = utils.clone(template);
                     obj["Id"] = model.getAttribute("id") || "";
                     obj["User"] = model.getAttribute("userName") || "";
                     obj["Description"] = model.getAttribute("description") || "";
-                    obj["Attachment"] = "Field Unknown";
+                    obj["No of bills"] = (model.getAttribute("files") || []).length;
                     obj["Amount"] = model.getAttribute("totalAmount") || "";
                     obj["Approved Amount"] = model.getAttribute("totalApprovedAmount") || "";
-                    obj["Status"] = "Status Unknown";
+                    obj["Status"] = (model.getAttribute("attributes") || {}).approved || "" ;
                     csv.push(obj)
                 }
                 resolve(csv);
