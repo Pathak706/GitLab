@@ -28,6 +28,7 @@ module.exports = model = class model {
             instance.dbObject.from = null;
             instance.dbObject.to = null;
             instance.dbObject.comments = null;
+            instance.dbObject.gstBill = null;
             instance.dbObject.attributes = null;
             instance.dbObject.created_at = null;
             instance.dbObject.updated_at = null;
