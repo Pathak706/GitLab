@@ -24,7 +24,7 @@ let service = {
                     reject(errors);
                 };
                 model.getNewInstance(body);
-                const requiredFields = ['files', 'projectId', 'userId', 'expenseId'];
+                const requiredFields = [ 'projectId', 'userId', 'expenseId'];
                 model.getLatestId()
                     .then((prevId) => {
                         body.id = (parseInt(prevId) + 1).toString();
