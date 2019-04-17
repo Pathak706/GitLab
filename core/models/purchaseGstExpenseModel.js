@@ -28,7 +28,7 @@ module.exports = model = class model {
             instance.dbObject.comments = null;
             instance.dbObject.geolocation = null;
 
-
+            instance.dbObject.status = null;
             instance.dbObject.created_at = null;
             instance.dbObject.updated_at = null;
             instance.dbObject.created_by = null;

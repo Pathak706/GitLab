@@ -18,6 +18,7 @@ let service = {
                     return body.files[index] = utils.pick(obj, "mimetype", "filename", "size");
                 });
                 body.gstPaid = (body.gstPaid === "true" ? true : (body.gstPaid === "false" ? false : null));
+                body.status = body.status || "PENDING";
                 let onSuccess = (dbObj) => {
                     resolve(dbObj);
                 };

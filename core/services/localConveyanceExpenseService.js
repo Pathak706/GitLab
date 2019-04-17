@@ -23,6 +23,7 @@ let service = {
                 let onError = (errors) => {
                     reject(errors);
                 };
+                body.status = body.status || "PENDING";
                 model.getNewInstance(body);
                 const requiredFields = [ 'projectId', 'userId', 'expenseId'];
                 let projectAttributes = null;

@@ -29,8 +29,8 @@ module.exports = model = class model {
             instance.dbObject.gstBill = null;
             instance.dbObject.geolocation = null;
             instance.dbObject.comments = null;
-            
 
+            instance.dbObject.status = null;
             instance.dbObject.created_at = null;
             instance.dbObject.updated_at = null;
             instance.dbObject.created_by = null;
@@ -79,7 +79,7 @@ module.exports = model = class model {
     };
     validate(requiredFields) {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let obj = instance.dbObject || {};
                 let errors = [];
@@ -105,7 +105,7 @@ module.exports = model = class model {
     }
     create() {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             instance.dbObject.created_at = new Date().getTime();
             instance.dbObject.updated_at = new Date().getTime();
             instance.dbObject.created_by = (instance._session || {}).userId || null;
@@ -142,7 +142,7 @@ module.exports = model = class model {
     }
     getLatestId() {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             let key = {
                 id: "1"
             }
@@ -163,7 +163,7 @@ module.exports = model = class model {
     }
     read() {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             let key = {
                 expenseId: (instance.dbObject || {}).expenseId || null
             }
@@ -189,7 +189,7 @@ module.exports = model = class model {
     }
     update(values) {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             let toSet = {};
             let findQuery = {
                 expenseId: (instance.dbObject || {}).expenseId || null
@@ -227,7 +227,7 @@ module.exports = model = class model {
     }
     delete() {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             let key = {
                 expenseId: (instance.dbObject || {}).expenseId || null
             }
@@ -247,7 +247,7 @@ module.exports = model = class model {
     }
     getExpenses(query) {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             let key = query;
             let readCallback = (err, result) => {
                 if (err) {

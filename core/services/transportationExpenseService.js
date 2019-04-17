@@ -20,6 +20,7 @@ let service = {
                 (body.files).forEach((obj, index) => {
                     return body.files[index] = utils.pick(obj, "mimetype", "filename", "size");
                 });
+                body.status = body.status || "PENDING";
                 let onSuccess = (dbObj) => {
                     resolve(dbObj);
                 };
