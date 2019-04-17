@@ -3,7 +3,7 @@ const utils = require("./../commons/utils");
 const _ = require("lodash");
 let service = {
     create: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let body = utils.clone(args[1] || {});
@@ -27,7 +27,8 @@ let service = {
                     reject(errors);
                 };
                 model.getNewInstance(body);
-                const requiredFields = [ 'projectId', 'userId', 'expenseId'];
+                const requiredFields = ['projectId', 'userId', 'expenseId'];
+                let projectAttributes = null;
                 model.getLatestId()
                     .then((prevId) => {
                         body.id = (parseInt(prevId) + 1).toString();
@@ -38,6 +39,7 @@ let service = {
                         return projectservice.read(_session, body.projectId);
                     })
                     .then((project) => {
+                        projectAttributes = project.attributes || {};
                         if ((project.users || []).indexOf(body.userId) < 0) {
                             return Promise.reject([rs.accessnotgranted])
                         } else {
@@ -47,6 +49,15 @@ let service = {
                     })
                     .then((user) => {
                         body.userName = ((user.firstName || "") + " " + (user.lastName || "")).trim();
+                        let toUpdate = {};
+                        toUpdate.pendingApprovals = projectAttributes.pendingApprovals || 0;
+                        toUpdate.pendingApprovals = toUpdate.pendingApprovals + 1;
+                        toUpdate['pendingTransportationExpenses'] = projectAttributes['pendingTransportationExpenses'] || 0;
+                        toUpdate['pendingTransportationExpenses'] = toUpdate['pendingTransportationExpenses'] + 1;
+                        responseObject = dbObj;
+                        return projectservice.updateAttributes(_session, body.projectId, toUpdate);
+                    })
+                    .then((projObj) => {
                         model.getNewInstance(body);
                         return model.create()
                     })
@@ -59,7 +70,7 @@ let service = {
         });
     },
     read: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let expenseId = args[1] || null;
@@ -79,7 +90,7 @@ let service = {
         });
     },
     update: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let expenseId = args[1] || null;
@@ -106,7 +117,7 @@ let service = {
         });
     },
     delete: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let expenseId = args[1] || null;
@@ -132,7 +143,7 @@ let service = {
         });
     },
     getExpenses: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let body = args[1] || {};
@@ -157,7 +168,7 @@ let service = {
         });
     },
     updateAttributes: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let expenseId = args[1] || null;
@@ -182,7 +193,7 @@ let service = {
         });
     },
     deleteAttributes: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let expenseId = args[1] || null;
@@ -210,7 +221,7 @@ let service = {
         });
     },
     setExcelData: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let expenses = args[1] || {};
@@ -238,7 +249,7 @@ let service = {
                     obj["No of bills"] = (model.getAttribute("files") || []).length;
                     obj["Amount"] = model.getAttribute("totalAmount") || "";
                     obj["Approved Amount"] = model.getAttribute("totalApprovedAmount") || "";
-                    obj["Status"] = (model.getAttribute("attributes") || {}).approved || "" ;
+                    obj["Status"] = (model.getAttribute("attributes") || {}).approved || "";
                     csv.push(obj)
                 }
                 resolve(csv);

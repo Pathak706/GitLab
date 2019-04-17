@@ -25,6 +25,7 @@ let service = {
                 };
                 model.getNewInstance(body);
                 const requiredFields = [ 'projectId', 'userId', 'expenseId'];
+                let projectAttributes = null;
                 model.getLatestId()
                     .then((prevId) => {
                         body.id = (parseInt(prevId) + 1).toString();
@@ -35,6 +36,7 @@ let service = {
                         return projectservice.read(_session, body.projectId);
                     })
                     .then((project) => {
+                        projectAttributes = project.attributes || {};
                         if ((project.users || []).indexOf(body.userId) < 0) {
                             return Promise.reject([rs.accessnotgranted])
                         } else {
@@ -44,6 +46,15 @@ let service = {
                     })
                     .then((user) => {
                         body.userName = ((user.firstName || "") + " " + (user.lastName || "")).trim();
+                        let toUpdate = {};
+                        toUpdate.pendingApprovals = projectAttributes.pendingApprovals || 0;
+                        toUpdate.pendingApprovals = toUpdate.pendingApprovals + 1;
+                        toUpdate['pendingLocalConveyanceExpenses'] = projectAttributes['pendingLocalConveyanceExpenses'] || 0;
+                        toUpdate['pendingLocalConveyanceExpenses'] = toUpdate['pendingLocalConveyanceExpenses'] + 1;
+                        responseObject = dbObj;
+                        return projectservice.updateAttributes(_session, body.projectId, toUpdate);
+                    })
+                    .then((projObj) => {
                         model.getNewInstance(body);
                         return model.create()
                     })
