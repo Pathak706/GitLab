@@ -305,8 +305,73 @@ let service = {
                     })
                     .then((user) => {
                         let attributes = user.attributes || {};
-                        attributes['balance'] = attributes['balance'] || 0;
+                        attributes['balance'] = parseFloat(attributes['balance'] || 0);
                         attributes['balance'] = attributes['balance'] - parseFloat(updateObj.totalApprovedAmount);
+                        return userservice.update(_session, expenseObj.userId, {
+                            attributes: attributes
+                        });
+                    })
+                    .then(resolve, reject);
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
+    forceRejectExpense: (...args) => {
+        return new Promise(function (resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let expenseId = args[1] || null;
+                let updateObj = args[2] || {};
+                let projectModel = require('./../models/transportationExpenseModel');
+                let projectservice = require('./projectservice').service;
+                let userservice = require('./userservice').service;
+                let model = new projectModel(_session);
+                let body = {};
+                body.expenseId = expenseId || null;
+                updateObj.status = updateObj.status || "REJECTED";
+                updateObj.totalApprovedAmount = updateObj.totalApprovedAmount || 0;
+                let projectId = null;
+                let projectObj = null;
+                let expenseObj = null;
+                model.getNewInstance(body);
+                model.read()
+                    .then((dbObj) => {
+                        expenseObj = dbObj || {};
+                        projectId = dbObj.projectId || null;
+                        return model.update({
+                            status:updateObj.status,
+                            totalApprovedAmount:null
+                        });
+                    })
+                    .then((dbObj) => {
+                        return projectservice.read(_session, projectId);
+                    })
+                    .then((proj) => {
+                        projectObj = proj;
+                        let toUpdate = {};
+                        toUpdate.attributes = projectObj.attributes || {};
+                        toUpdate.attributes['All Expenses'] = parseFloat(toUpdate.attributes['All Expenses'] || 0);
+                        toUpdate.attributes['All Expenses'] = toUpdate.attributes['All Expenses'] - parseFloat(updateObj.totalApprovedAmount);
+                        toUpdate.attributes['Purchase Gst Expenses'] = parseFloat(toUpdate.attributes['Purchase Gst Expenses'] || 0);
+                        toUpdate.attributes['Purchase Gst Expenses'] = toUpdate.attributes['Purchase Gst Expenses'] - parseFloat(updateObj.totalApprovedAmount);
+                        // toUpdate.attributes['Pending Purchase Gst Expenses'] = toUpdate.attributes['Pending Purchase Gst Expenses'] || 0;
+                        // toUpdate.attributes['Pending Purchase Gst Expenses'] = toUpdate.attributes['Pending Purchase Gst Expenses'] - 1;
+                        // toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
+                        // toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
+                        return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
+                    }).then(() => {
+                        if ((projectObj.users || []).indexOf(expenseObj.userId) < 0) {
+                            return Promise.reject([rs.accessnotgranted])
+                        } else {
+                            return userservice.read(_session, expenseObj.userId);
+                        }
+                    })
+                    .then((user) => {
+                        let attributes = user.attributes || {};
+                        attributes['balance'] = parseFloat(attributes['balance'] || 0);
+                        attributes['balance'] = attributes['balance'] + parseFloat(updateObj.totalApprovedAmount);
                         return userservice.update(_session, expenseObj.userId, {
                             attributes: attributes
                         });
@@ -455,6 +520,18 @@ let router = {
             })
         };
         service.rejectExpense(req.session, req.params.expenseId, req.body).then(successCB, next);
+    },
+    forceRejectExpense: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "Expenses Rejected",
+                    code: "UPDATED"
+                }]
+            })
+        };
+        service.forceRejectExpense(req.session, req.params.expenseId, req.body).then(successCB, next);
     },
 };
 module.exports.service = service;
