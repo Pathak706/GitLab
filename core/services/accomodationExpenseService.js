@@ -3,7 +3,7 @@ const utils = require("./../commons/utils");
 const _ = require("lodash");
 let service = {
     create: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let body = utils.clone(args[1] || {});
@@ -26,7 +26,7 @@ let service = {
                     reject(errors);
                 };
                 model.getNewInstance(body);
-                const requiredFields = [ 'projectId', 'userId', 'expenseId'];
+                const requiredFields = ['projectId', 'userId', 'expenseId'];
                 let projectAttributes = null;
                 model.getLatestId()
                     .then((prevId) => {
@@ -49,10 +49,10 @@ let service = {
                     .then((user) => {
                         body.userName = ((user.firstName || "") + " " + (user.lastName || "")).trim();
                         let toUpdate = {};
-                        toUpdate.pendingApprovals = projectAttributes.pendingApprovals || 0;
-                        toUpdate.pendingApprovals = toUpdate.pendingApprovals + 1;
-                        toUpdate['pendingAccomodationExpenses'] = projectAttributes['pendingAccomodationExpenses'] || 0;
-                        toUpdate['pendingAccomodationExpenses'] = toUpdate['pendingAccomodationExpenses'] + 1;
+                        toUpdate['Pending Approvals'] = projectAttributes['Pending Approvals'] || 0;
+                        toUpdate['Pending Approvals'] = toUpdate['Pending Approvals'] + 1;
+                        toUpdate['Pending Accomodation Expenses'] = projectAttributes['Pending Accomodation Expenses'] || 0;
+                        toUpdate['Pending Accomodation Expenses'] = toUpdate['Pending Accomodation Expenses'] + 1;
                         responseObject = dbObj;
                         return projectservice.updateAttributes(_session, body.projectId, toUpdate);
                     })
@@ -69,7 +69,7 @@ let service = {
         });
     },
     read: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let expenseId = args[1] || null;
@@ -89,7 +89,7 @@ let service = {
         });
     },
     update: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let expenseId = args[1] || null;
@@ -116,7 +116,7 @@ let service = {
         });
     },
     delete: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let expenseId = args[1] || null;
@@ -142,7 +142,7 @@ let service = {
         });
     },
     getExpenses: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let body = args[1] || {};
@@ -168,7 +168,7 @@ let service = {
         });
     },
     updateAttributes: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let expenseId = args[1] || null;
@@ -193,7 +193,7 @@ let service = {
         });
     },
     deleteAttributes: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let expenseId = args[1] || null;
@@ -221,7 +221,7 @@ let service = {
         });
     },
     setExcelData: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let expenses = args[1] || {};
@@ -249,7 +249,7 @@ let service = {
                     obj["GST Bill"] = model.getAttribute("gstBill") || "";
                     obj["Amount"] = model.getAttribute("totalAmount") || "";
                     obj["Approved Amount"] = model.getAttribute("totalApprovedAmount") || "";
-                    obj["Status"] = (model.getAttribute("attributes") || {}).approved || "" ;
+                    obj["Status"] = (model.getAttribute("attributes") || {}).approved || "";
                     csv.push(obj)
                 }
                 resolve(csv);
@@ -259,7 +259,69 @@ let service = {
                 return;
             }
         });
-    }
+    },
+    approveExpense: (...args) => {
+        return new Promise(function (resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let expenseId = args[1] || null;
+                let updateObj = args[2] || {};
+                let projectModel = require('./../models/transportationExpenseModel');
+                let projectservice = require('./projectservice').service;
+                let userservice = require('./userservice').service;
+                let model = new projectModel(_session);
+                let body = {};
+                body.expenseId = expenseId || null;
+                updateObj.status = updateObj.status || "APPROVED";
+                updateObj.totalApprovedAmount = updateObj.totalApprovedAmount || 0;
+                let projectId = null;
+                let projectObj = null;
+                let expenseObj = null;
+                model.getNewInstance(body);
+                model.read()
+                    .then((dbObj) => {
+                        expenseObj = dbObj || {};
+                        projectId = dbObj.projectId || null;
+                        return model.update(updateObj);
+                    })
+                    .then((dbObj) => {
+                        return projectservice.read(_session, projectId);
+                    })
+                    .then((proj) => {
+                        projectObj = proj;
+                        let toUpdate = {};
+                        toUpdate.attributes = projectObj.attributes || {};
+                        toUpdate.attributes['All Expenses'] = parseFloat(toUpdate.attributes['All Expenses'] || 0);
+                        toUpdate.attributes['All Expenses'] = toUpdate.attributes['All Expenses'] + parseFloat(updateObj.totalApprovedAmount);
+                        toUpdate.attributes['Accomodation Expenses'] = parseFloat(toUpdate.attributes['Accomodation Expenses'] || 0);
+                        toUpdate.attributes['Accomodation Expenses'] = toUpdate.attributes['Accomodation Expenses'] + parseFloat(updateObj.totalApprovedAmount);
+                        toUpdate.attributes['Pending Accomodation Expenses'] = toUpdate.attributes['Pending Accomodation Expenses'] || 0;
+                        toUpdate.attributes['Pending Accomodation Expenses'] = toUpdate.attributes['Pending Accomodation Expenses'] - 1;
+                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
+                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
+                        return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
+                    }).then(() => {
+                        if ((projectObj.users || []).indexOf(expenseObj.userId) < 0) {
+                            return Promise.reject([rs.accessnotgranted])
+                        } else {
+                            return userservice.read(_session, expenseObj.userId);
+                        }
+                    })
+                    .then((user) => {
+                        let attributes = user.attributes || {};
+                        attributes['balance'] = attributes['balance'] || 0;
+                        attributes['balance'] = attributes['balance'] - parseFloat(updateObj.totalApprovedAmount);
+                        return userservice.update(_session, expenseObj.userId, {
+                            attributes: attributes
+                        });
+                    })
+                    .then(resolve, reject);
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
 }
 let router = {
     create: (req, res, next) => {
@@ -335,6 +397,18 @@ let router = {
             })
         };
         service.deleteAttributes(req.session, req.params.expenseId, req.body).then(successCB, next);
+    },
+    approveExpense: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "Expenses Approved",
+                    code: "UPDATED"
+                }]
+            })
+        };
+        service.approveExpense(req.session, req.params.expenseId, req.body).then(successCB, next);
     },
 };
 module.exports.service = service;

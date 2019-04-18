@@ -62,6 +62,7 @@ module.exports = (express) => {
     versionRouter.get('/expenses/transportation-expenses/:expenseId/files/:filename', jwt.verifyRequest, fileservice.expenseReadFileRequest);
     versionRouter.put('/expenses/transportation-expenses/:expenseId', jwt.verifyRequest, transportationExpenseService.update);
     versionRouter.get('/expenses/transportation-expenses/', jwt.verifyRequest, transportationExpenseService.getExpenses);
+    versionRouter.post('/expenses/transportation-expenses/:expenseId/approve', jwt.verifyRequest, transportationExpenseService.approveExpense);
     versionRouter.put('/expenses/transportation-expenses/:expenseId/attributes', jwt.verifyRequest, transportationExpenseService.updateAttributes);
     versionRouter.delete('/expenses/transportation-expenses/:expenseId/attributes', jwt.verifyRequest, transportationExpenseService.deleteAttributes);
 
@@ -70,6 +71,7 @@ module.exports = (express) => {
     versionRouter.get('/expenses/accomodation-expenses/:expenseId/files/:filename', jwt.verifyRequest, fileservice.expenseReadFileRequest);
     versionRouter.put('/expenses/accomodation-expenses/:expenseId', jwt.verifyRequest, accomodationExpenseService.update);
     versionRouter.get('/expenses/accomodation-expenses/', jwt.verifyRequest, accomodationExpenseService.getExpenses);
+    versionRouter.post('/expenses/accomodation-expenses/:expenseId/approve', jwt.verifyRequest, accomodationExpenseService.approveExpense);
     versionRouter.put('/expenses/accomodation-expenses/:expenseId/attributes', jwt.verifyRequest, accomodationExpenseService.updateAttributes);
     versionRouter.delete('/expenses/accomodation-expenses/:expenseId/attributes', jwt.verifyRequest, accomodationExpenseService.deleteAttributes);
 
@@ -78,6 +80,7 @@ module.exports = (express) => {
     versionRouter.get('/expenses/food-and-beverage-expenses/:expenseId/files/:filename', jwt.verifyRequest, fileservice.expenseReadFileRequest);
     versionRouter.put('/expenses/food-and-beverage-expenses/:expenseId', jwt.verifyRequest, foodAndBeverageExpenseService.update);
     versionRouter.get('/expenses/food-and-beverage-expenses/', jwt.verifyRequest, foodAndBeverageExpenseService.getExpenses);
+    versionRouter.post('/expenses/food-and-beverage-expenses/:expenseId/approve', jwt.verifyRequest, foodAndBeverageExpenseService.approveExpense);
     versionRouter.put('/expenses/food-and-beverage-expenses/:expenseId/attributes', jwt.verifyRequest, foodAndBeverageExpenseService.updateAttributes);
     versionRouter.delete('/expenses/food-and-beverage-expenses/:expenseId/attributes', jwt.verifyRequest, foodAndBeverageExpenseService.deleteAttributes);
 
@@ -86,6 +89,7 @@ module.exports = (express) => {
     versionRouter.get('/expenses/miscellaneous-expenses/:expenseId/files/:filename', jwt.verifyRequest, fileservice.expenseReadFileRequest);
     versionRouter.put('/expenses/miscellaneous-expenses/:expenseId', jwt.verifyRequest, miscellaneousExpenseService.update);
     versionRouter.get('/expenses/miscellaneous-expenses/', jwt.verifyRequest, miscellaneousExpenseService.getExpenses);
+    versionRouter.post('/expenses/miscellaneous-expenses/:expenseId/approve', jwt.verifyRequest, miscellaneousExpenseService.approveExpense);
     versionRouter.put('/expenses/miscellaneous-expenses/:expenseId/attributes', jwt.verifyRequest, miscellaneousExpenseService.updateAttributes);
     versionRouter.delete('/expenses/miscellaneous-expenses/:expenseId/attributes', jwt.verifyRequest, miscellaneousExpenseService.deleteAttributes);
 
@@ -94,6 +98,7 @@ module.exports = (express) => {
     versionRouter.get('/expenses/purchase-gst/:expenseId/files/:filename', jwt.verifyRequest, fileservice.expenseReadFileRequest);
     versionRouter.put('/expenses/purchase-gst/:expenseId', jwt.verifyRequest, purchaseGstExpenseService.update);
     versionRouter.get('/expenses/purchase-gst/', jwt.verifyRequest, purchaseGstExpenseService.getExpenses);
+    versionRouter.post('/expenses/purchase-gst/:expenseId/approve', jwt.verifyRequest, purchaseGstExpenseService.approveExpense);
     versionRouter.put('/expenses/purchase-gst/:expenseId/attributes', jwt.verifyRequest, purchaseGstExpenseService.updateAttributes);
     versionRouter.delete('/expenses/purchase-gst/:expenseId/attributes', jwt.verifyRequest, purchaseGstExpenseService.deleteAttributes);
 
@@ -102,6 +107,7 @@ module.exports = (express) => {
     versionRouter.get('/expenses/local-conveyance-expenses/:expenseId/files/:filename', jwt.verifyRequest, fileservice.expenseReadFileRequest);
     versionRouter.put('/expenses/local-conveyance-expenses/:expenseId', jwt.verifyRequest, localConveyanceExpenseService.update);
     versionRouter.get('/expenses/local-conveyance-expenses/', jwt.verifyRequest, localConveyanceExpenseService.getExpenses);
+    versionRouter.post('/expenses/local-conveyance-expenses/approve', jwt.verifyRequest, localConveyanceExpenseService.approveExpense);
     versionRouter.put('/expenses/local-conveyance-expenses/:expenseId/attributes', jwt.verifyRequest, localConveyanceExpenseService.updateAttributes);
     versionRouter.delete('/expenses/local-conveyance-expenses/:expenseId/attributes', jwt.verifyRequest, localConveyanceExpenseService.deleteAttributes);
 
