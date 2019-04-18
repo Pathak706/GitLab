@@ -317,6 +317,44 @@ let service = {
             }
         });
     },
+    rejectExpense: (...args) => {
+        return new Promise(function (resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let expenseId = args[1] || null;
+                let updateObj = {};
+                let projectModel = require('./../models/transportationExpenseModel');
+                let projectservice = require('./projectservice').service;
+                let model = new projectModel(_session);
+                let body = {};
+                body.expenseId = expenseId || null;
+                updateObj.status = updateObj.status || "REJECTED";
+                let projectId = null;
+                model.getNewInstance(body);
+                model.read()
+                    .then((dbObj) => {
+                        projectId = dbObj.projectId || null;
+                        return model.update(updateObj);
+                    })
+                    .then((dbObj) => {
+                        return projectservice.read(_session, projectId);
+                    })
+                    .then((projectObj) => {
+                        let toUpdate = {};
+                        toUpdate.attributes = projectObj.attributes || {};
+                        toUpdate.attributes['Pending Miscellaneous Expenses'] = toUpdate.attributes['Pending Miscellaneous Expenses'] || 0;
+                        toUpdate.attributes['Pending Miscellaneous Expenses'] = toUpdate.attributes['Pending Miscellaneous Expenses'] - 1;
+                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
+                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
+                        return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
+                    })
+                    .then(resolve, reject);
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
 }
 let router = {
     create: (req, res, next) => {
@@ -404,6 +442,18 @@ let router = {
             })
         };
         service.approveExpense(req.session, req.params.expenseId, req.body).then(successCB, next);
+    },
+    rejectExpense: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "Expenses Rejected",
+                    code: "UPDATED"
+                }]
+            })
+        };
+        service.rejectExpense(req.session, req.params.expenseId, req.body).then(successCB, next);
     },
 };
 module.exports.service = service;
