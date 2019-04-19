@@ -383,7 +383,7 @@ let service = {
                 reject(e);
             }
         });
-    }
+    },
     rejectExpense: (...args) => {
         return new Promise(function (resolve, reject) {
             try {
