@@ -52,7 +52,6 @@ let service = {
                         toUpdate.pendingApprovals = toUpdate.pendingApprovals + 1;
                         toUpdate['pendingRequestPayment'] = projectAttributes['pendingRequestPayment'] || 0;
                         toUpdate['pendingRequestPayment'] = toUpdate['pendingRequestPayment'] + 1;
-                        responseObject = dbObj;
                         return projectservice.updateAttributes(_session, body.projectId, toUpdate);
                     })
                     .then((projObj) => {

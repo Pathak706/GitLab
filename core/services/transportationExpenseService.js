@@ -55,7 +55,6 @@ let service = {
                         toUpdate['Pending Approvals'] = toUpdate['Pending Approvals'] + 1;
                         toUpdate['Pending Transportation Expenses'] = projectAttributes['Pending Transportation Expenses'] || 0;
                         toUpdate['Pending Transportation Expenses'] = toUpdate['Pending Transportation Expenses'] + 1;
-                        responseObject = dbObj;
                         return projectservice.updateAttributes(_session, body.projectId, toUpdate);
                     })
                     .then((projObj) => {
