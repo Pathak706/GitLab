@@ -50,8 +50,8 @@ let service = {
                         let toUpdate = {};
                         toUpdate['Pending Approvals'] = projectAttributes['Pending Approvals'] || 0;
                         toUpdate['Pending Approvals'] = toUpdate['Pending Approvals'] + 1;
-                        toUpdate['Pending Food And Beverage Expenses'] = projectAttributes['Pending Food And Beverage Expenses'] || 0;
-                        toUpdate['Pending Food And Beverage Expenses'] = toUpdate['Pending Food And Beverage Expenses'] + 1;
+                        toUpdate['Pending F&B Expenses'] = projectAttributes['Pending F&B Expenses'] || 0;
+                        toUpdate['Pending F&B Expenses'] = toUpdate['Pending F&B Expenses'] + 1;
 
                         return projectservice.updateAttributes(_session, body.projectId, toUpdate);
                     })
@@ -290,10 +290,10 @@ let service = {
                         toUpdate.attributes = projectObj.attributes || {};
                         toUpdate.attributes['All Expenses'] = parseFloat(toUpdate.attributes['All Expenses'] || 0);
                         toUpdate.attributes['All Expenses'] = toUpdate.attributes['All Expenses'] + parseFloat(updateObj.totalApprovedAmount);
-                        toUpdate.attributes['Food And Beverage Expenses'] = parseFloat(toUpdate.attributes['Food And Beverage Expenses'] || 0);
-                        toUpdate.attributes['Food And Beverage Expenses'] = toUpdate.attributes['Food And Beverage Expenses'] + parseFloat(updateObj.totalApprovedAmount);
-                        toUpdate.attributes['Pending Food And Beverage Expenses'] = toUpdate.attributes['Pending Food And Beverage Expenses'] || 0;
-                        toUpdate.attributes['Pending Food And Beverage Expenses'] = toUpdate.attributes['Pending Food And Beverage Expenses'] - 1;
+                        toUpdate.attributes['F&B Expenses'] = parseFloat(toUpdate.attributes['F&B Expenses'] || 0);
+                        toUpdate.attributes['F&B Expenses'] = toUpdate.attributes['F&B Expenses'] + parseFloat(updateObj.totalApprovedAmount);
+                        toUpdate.attributes['Pending F&B Expenses'] = toUpdate.attributes['Pending F&B Expenses'] || 0;
+                        toUpdate.attributes['Pending F&B Expenses'] = toUpdate.attributes['Pending F&B Expenses'] - 1;
                         toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
                         toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
                         return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
@@ -355,10 +355,10 @@ let service = {
                         toUpdate.attributes = projectObj.attributes || {};
                         toUpdate.attributes['All Expenses'] = parseFloat(toUpdate.attributes['All Expenses'] || 0);
                         toUpdate.attributes['All Expenses'] = toUpdate.attributes['All Expenses'] - parseFloat(updateObj.totalApprovedAmount);
-                        toUpdate.attributes['Food And Beverage Expenses'] = parseFloat(toUpdate.attributes['Food And Beverage Expenses'] || 0);
-                        toUpdate.attributes['Food And Beverage Expenses'] = toUpdate.attributes['Food And Beverage Expenses'] - parseFloat(updateObj.totalApprovedAmount);
-                        // toUpdate.attributes['Pending Food And Beverage Expenses'] = toUpdate.attributes['Pending Food And Beverage Expenses'] || 0;
-                        // toUpdate.attributes['Pending Food And Beverage Expenses'] = toUpdate.attributes['Pending Food And Beverage Expenses'] - 1;
+                        toUpdate.attributes['F&B Expenses'] = parseFloat(toUpdate.attributes['F&B Expenses'] || 0);
+                        toUpdate.attributes['F&B Expenses'] = toUpdate.attributes['F&B Expenses'] - parseFloat(updateObj.totalApprovedAmount);
+                        // toUpdate.attributes['Pending F&B Expenses'] = toUpdate.attributes['Pending F&B Expenses'] || 0;
+                        // toUpdate.attributes['Pending F&B Expenses'] = toUpdate.attributes['Pending F&B Expenses'] - 1;
                         // toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
                         // toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
                         return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
@@ -409,8 +409,8 @@ let service = {
                     .then((projectObj) => {
                         let toUpdate = {};
                         toUpdate.attributes = projectObj.attributes || {};
-                        toUpdate.attributes['Pending Food And Beverage Expenses'] = toUpdate.attributes['Pending Food And Beverage Expenses'] || 0;
-                        toUpdate.attributes['Pending Food And Beverage Expenses'] = toUpdate.attributes['Pending Food And Beverage Expenses'] - 1;
+                        toUpdate.attributes['Pending F&B Expenses'] = toUpdate.attributes['Pending F&B Expenses'] || 0;
+                        toUpdate.attributes['Pending F&B Expenses'] = toUpdate.attributes['Pending F&B Expenses'] - 1;
                         toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
                         toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
                         return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);

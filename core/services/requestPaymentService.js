@@ -48,10 +48,10 @@ let service = {
                     .then((user) => {
                         body.userName = ((user.firstName || "") + " " + (user.lastName || "")).trim();
                         let toUpdate = {};
-                        toUpdate.pendingApprovals = projectAttributes.pendingApprovals || 0;
-                        toUpdate.pendingApprovals = toUpdate.pendingApprovals + 1;
-                        toUpdate['pendingRequestPayment'] = projectAttributes['pendingRequestPayment'] || 0;
-                        toUpdate['pendingRequestPayment'] = toUpdate['pendingRequestPayment'] + 1;
+                        toUpdate['Pending Approvals'] = projectAttributes['Pending Approvals'] || 0;
+                        toUpdate['Pending Approvals'] = toUpdate['Pending Approvals'] + 1;
+                        toUpdate['Pending Payment Requests'] = projectAttributes['Pending Payment Requests'] || 0;
+                        toUpdate['Pending Payment Requests'] = toUpdate['Pending Payment Requests'] + 1;
                         return projectservice.updateAttributes(_session, body.projectId, toUpdate);
                     })
                     .then((projObj) => {
