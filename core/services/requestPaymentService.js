@@ -288,6 +288,8 @@ let service = {
                         toUpdate.attributes['Payment Requests'] = toUpdate.attributes['Payment Requests'] + parseFloat(updateObj.totalApprovedAmount);
                         toUpdate.attributes['Pending Payment Requests'] = toUpdate.attributes['Pending Payment Requests'] || 0;
                         toUpdate.attributes['Pending Payment Requests'] = toUpdate.attributes['Pending Payment Requests'] - 1;
+                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
+                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
                         return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
                     }).then(() => {
                         if ((projectObj.users || []).indexOf(expenseObj.userId) < 0) {
@@ -298,8 +300,8 @@ let service = {
                     })
                     .then((user) => {
                         let attributes = user.attributes || {};
-                        attributes['balance'] = parseFloat(attributes['balance'] || 0);
-                        attributes['balance'] = attributes['balance'] + parseFloat(updateObj.totalApprovedAmount);
+                        attributes['Balance'] = parseFloat(attributes['Balance'] || 0);
+                        attributes['Balance'] = attributes['Balance'] + parseFloat(updateObj.totalApprovedAmount);
                         return userservice.update(_session, expenseObj.userId, {
                             attributes: attributes
                         });
@@ -324,7 +326,6 @@ let service = {
                 let body = {};
                 body.paymentId = paymentId || null;
                 updateObj.status = updateObj.status || "REJECTED";
-                updateObj.totalApprovedAmount = updateObj.totalApprovedAmount || 0;
                 let projectId = null;
                 let projectObj = null;
                 let expenseObj = null;
@@ -346,7 +347,7 @@ let service = {
                         let toUpdate = {};
                         toUpdate.attributes = projectObj.attributes || {};
                         toUpdate.attributes['Payment Requests'] = parseFloat(toUpdate.attributes['Payment Requests'] || 0);
-                        toUpdate.attributes['Payment Requests'] = toUpdate.attributes['Payment Requests'] - parseFloat(updateObj.totalApprovedAmount);
+                        toUpdate.attributes['Payment Requests'] = toUpdate.attributes['Payment Requests'] - parseFloat(expenseObj.totalApprovedAmount);
                         return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
                     }).then(() => {
                         if ((projectObj.users || []).indexOf(expenseObj.userId) < 0) {
@@ -357,8 +358,8 @@ let service = {
                     })
                     .then((user) => {
                         let attributes = user.attributes || {};
-                        attributes['balance'] = parseFloat(attributes['balance'] || 0);
-                        attributes['balance'] = attributes['balance'] - parseFloat(updateObj.totalApprovedAmount);
+                        attributes['Balance'] = parseFloat(attributes['Balance'] || 0);
+                        attributes['Balance'] = attributes['Balance'] - parseFloat(expenseObj.totalApprovedAmount);
                         return userservice.update(_session, expenseObj.userId, {
                             attributes: attributes
                         });
@@ -397,6 +398,8 @@ let service = {
                         toUpdate.attributes = projectObj.attributes || {};
                         toUpdate.attributes['Pending Payment Requests'] = toUpdate.attributes['Pending Payment Requests'] || 0;
                         toUpdate.attributes['Pending Payment Requests'] = toUpdate.attributes['Pending Payment Requests'] - 1;
+                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
+                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
                         return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
                     })
                     .then(resolve, reject);
