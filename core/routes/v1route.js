@@ -128,6 +128,9 @@ module.exports = (express) => {
     versionRouter.get('/requests/payments/:paymentId', jwt.verifyRequest, requestPaymentService.read);
     versionRouter.get('/requests/payments/:paymentId/files/:filename', jwt.verifyRequest, fileservice.requestPaymentReadFileRequest);
     versionRouter.put('/requests/payments/:paymentId', jwt.verifyRequest, requestPaymentService.update);
+    versionRouter.post('/requests/payments/:paymentId/approve', jwt.verifyRequest, requestPaymentService.approvePayment);
+    versionRouter.post('/requests/payments/:paymentId/reject', jwt.verifyRequest, requestPaymentService.rejectPayment);
+    versionRouter.post('/requests/payments/:paymentId/force-reject', jwt.verifyRequest, requestPaymentService.forceRejectPayment);
     versionRouter.get('/requests/payments/', jwt.verifyRequest, requestPaymentService.getPayments);
     versionRouter.put('/requests/payments/:paymentId/attributes', jwt.verifyRequest, requestPaymentService.updateAttributes);
     versionRouter.delete('/requests/payments/:paymentId/attributes', jwt.verifyRequest, requestPaymentService.deleteAttributes);

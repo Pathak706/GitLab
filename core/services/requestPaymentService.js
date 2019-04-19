@@ -253,7 +253,160 @@ let service = {
                 return;
             }
         });
-    }
+    },
+    approvePayment: (...args) => {
+        return new Promise(function (resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let paymentId = args[1] || null;
+                let updateObj = args[2] || {};
+                let projectModel = require('./../models/transportationExpenseModel');
+                let projectservice = require('./projectservice').service;
+                let userservice = require('./userservice').service;
+                let model = new projectModel(_session);
+                let body = {};
+                body.paymentId = paymentId || null;
+                updateObj.status = updateObj.status || "APPROVED";
+                updateObj.totalApprovedAmount = updateObj.totalApprovedAmount || 0;
+                let projectId = null;
+                let projectObj = null;
+                let expenseObj = null;
+                model.getNewInstance(body);
+                model.read()
+                    .then((dbObj) => {
+                        expenseObj = dbObj || {};
+                        projectId = dbObj.projectId || null;
+                        return model.update(updateObj);
+                    })
+                    .then((dbObj) => {
+                        return projectservice.read(_session, projectId);
+                    })
+                    .then((proj) => {
+                        projectObj = proj;
+                        let toUpdate = {};
+                        toUpdate.attributes = projectObj.attributes || {};
+                        toUpdate.attributes['Payment Requests'] = parseFloat(toUpdate.attributes['Payment Requests'] || 0);
+                        toUpdate.attributes['Payment Requests'] = toUpdate.attributes['Payment Requests'] + parseFloat(updateObj.totalApprovedAmount);
+                        toUpdate.attributes['Pending Payment Requests'] = toUpdate.attributes['Pending Payment Requests'] || 0;
+                        toUpdate.attributes['Pending Payment Requests'] = toUpdate.attributes['Pending Payment Requests'] - 1;
+                        return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
+                    }).then(() => {
+                        if ((projectObj.users || []).indexOf(expenseObj.userId) < 0) {
+                            return Promise.reject([rs.accessnotgranted])
+                        } else {
+                            return userservice.read(_session, expenseObj.userId);
+                        }
+                    })
+                    .then((user) => {
+                        let attributes = user.attributes || {};
+                        attributes['balance'] = parseFloat(attributes['balance'] || 0);
+                        attributes['balance'] = attributes['balance'] + parseFloat(updateObj.totalApprovedAmount);
+                        return userservice.update(_session, expenseObj.userId, {
+                            attributes: attributes
+                        });
+                    })
+                    .then(resolve, reject);
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
+    forceRejectPayment: (...args) => {
+        return new Promise(function (resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let paymentId = args[1] || null;
+                let updateObj = args[2] || {};
+                let projectModel = require('./../models/transportationExpenseModel');
+                let projectservice = require('./projectservice').service;
+                let userservice = require('./userservice').service;
+                let model = new projectModel(_session);
+                let body = {};
+                body.paymentId = paymentId || null;
+                updateObj.status = updateObj.status || "REJECTED";
+                updateObj.totalApprovedAmount = updateObj.totalApprovedAmount || 0;
+                let projectId = null;
+                let projectObj = null;
+                let expenseObj = null;
+                model.getNewInstance(body);
+                model.read()
+                    .then((dbObj) => {
+                        expenseObj = dbObj || {};
+                        projectId = dbObj.projectId || null;
+                        return model.update({
+                            status:updateObj.status,
+                            totalApprovedAmount:null
+                        });
+                    })
+                    .then((dbObj) => {
+                        return projectservice.read(_session, projectId);
+                    })
+                    .then((proj) => {
+                        projectObj = proj;
+                        let toUpdate = {};
+                        toUpdate.attributes = projectObj.attributes || {};
+                        toUpdate.attributes['Payment Requests'] = parseFloat(toUpdate.attributes['Payment Requests'] || 0);
+                        toUpdate.attributes['Payment Requests'] = toUpdate.attributes['Payment Requests'] - parseFloat(updateObj.totalApprovedAmount);
+                        return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
+                    }).then(() => {
+                        if ((projectObj.users || []).indexOf(expenseObj.userId) < 0) {
+                            return Promise.reject([rs.accessnotgranted])
+                        } else {
+                            return userservice.read(_session, expenseObj.userId);
+                        }
+                    })
+                    .then((user) => {
+                        let attributes = user.attributes || {};
+                        attributes['balance'] = parseFloat(attributes['balance'] || 0);
+                        attributes['balance'] = attributes['balance'] - parseFloat(updateObj.totalApprovedAmount);
+                        return userservice.update(_session, expenseObj.userId, {
+                            attributes: attributes
+                        });
+                    })
+                    .then(resolve, reject);
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
+    rejectPayment: (...args) => {
+        return new Promise(function (resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let paymentId = args[1] || null;
+                let updateObj = {};
+                let projectModel = require('./../models/transportationExpenseModel');
+                let projectservice = require('./projectservice').service;
+                let model = new projectModel(_session);
+                let body = {};
+                body.paymentId = paymentId || null;
+                updateObj.status = updateObj.status || "REJECTED";
+                let projectId = null;
+                model.getNewInstance(body);
+                model.read()
+                    .then((dbObj) => {
+                        projectId = dbObj.projectId || null;
+                        return model.update(updateObj);
+                    })
+                    .then((dbObj) => {
+                        return projectservice.read(_session, projectId);
+                    })
+                    .then((projectObj) => {
+                        let toUpdate = {};
+                        toUpdate.attributes = projectObj.attributes || {};
+                        toUpdate.attributes['Pending Payment Requests'] = toUpdate.attributes['Pending Payment Requests'] || 0;
+                        toUpdate.attributes['Pending Payment Requests'] = toUpdate.attributes['Pending Payment Requests'] - 1;
+                        return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
+                    })
+                    .then(resolve, reject);
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
 }
 let router = {
     create: (req, res, next) => {
@@ -330,6 +483,42 @@ let router = {
         };
         service.deleteAttributes(req.session, req.params.paymentId, req.body).then(successCB, next);
     },
+    approvePayment: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "Payment Approved",
+                    code: "UPDATED"
+                }]
+            })
+        };
+        service.approvePayment(req.session, req.params.paymentId, req.body).then(successCB, next);
+    },
+    rejectPayment: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "Payment Rejected",
+                    code: "UPDATED"
+                }]
+            })
+        };
+        service.rejectPayment(req.session, req.params.paymentId, req.body).then(successCB, next);
+    },
+    forceRejectPayment: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "Payment Rejected",
+                    code: "UPDATED"
+                }]
+            })
+        };
+        service.forceRejectPayment(req.session, req.params.paymentId, req.body).then(successCB, next);
+    }
 };
 module.exports.service = service;
 module.exports.router = router;
