@@ -295,10 +295,12 @@ let service = {
                         toUpdate.attributes['All Expenses'] = toUpdate.attributes['All Expenses'] + parseFloat(updateObj.totalApprovedAmount);
                         toUpdate.attributes['Transportation Expenses'] = parseFloat(toUpdate.attributes['Transportation Expenses'] || 0);
                         toUpdate.attributes['Transportation Expenses'] = toUpdate.attributes['Transportation Expenses'] + parseFloat(updateObj.totalApprovedAmount);
-                        toUpdate.attributes['Pending Transportation Expenses'] = toUpdate.attributes['Pending Transportation Expenses'] || 0;
-                        toUpdate.attributes['Pending Transportation Expenses'] = toUpdate.attributes['Pending Transportation Expenses'] - 1;
-                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
-                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
+                        if(!updateObj.forceApprove){
+                            toUpdate.attributes['Pending Transportation Expenses'] = toUpdate.attributes['Pending Transportation Expenses'] || 0;
+                            toUpdate.attributes['Pending Transportation Expenses'] = toUpdate.attributes['Pending Transportation Expenses'] - 1;
+                            toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
+                            toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
+                        }
                         return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
                     }).then(() => {
                         if ((projectObj.users || []).indexOf(expenseObj.userId) < 0) {

@@ -291,10 +291,12 @@ let service = {
                         toUpdate.attributes['All Expenses'] = toUpdate.attributes['All Expenses'] + parseFloat(updateObj.totalApprovedAmount);
                         toUpdate.attributes['F&B Expenses'] = parseFloat(toUpdate.attributes['F&B Expenses'] || 0);
                         toUpdate.attributes['F&B Expenses'] = toUpdate.attributes['F&B Expenses'] + parseFloat(updateObj.totalApprovedAmount);
-                        toUpdate.attributes['Pending F&B Expenses'] = toUpdate.attributes['Pending F&B Expenses'] || 0;
-                        toUpdate.attributes['Pending F&B Expenses'] = toUpdate.attributes['Pending F&B Expenses'] - 1;
-                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
-                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
+                        if (!updateObj.forceApprove) {
+                            toUpdate.attributes['Pending F&B Expenses'] = toUpdate.attributes['Pending F&B Expenses'] || 0;
+                            toUpdate.attributes['Pending F&B Expenses'] = toUpdate.attributes['Pending F&B Expenses'] - 1;
+                            toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
+                            toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
+                        }
                         return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
                     }).then(() => {
                         if ((projectObj.users || []).indexOf(expenseObj.userId) < 0) {
@@ -340,8 +342,8 @@ let service = {
                         expenseObj = dbObj || {};
                         projectId = dbObj.projectId || null;
                         return model.update({
-                            status:updateObj.status,
-                            totalApprovedAmount:null
+                            status: updateObj.status,
+                            totalApprovedAmount: null
                         });
                     })
                     .then((dbObj) => {

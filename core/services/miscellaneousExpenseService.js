@@ -289,10 +289,12 @@ let service = {
                         toUpdate.attributes['All Expenses'] = toUpdate.attributes['All Expenses'] + parseFloat(updateObj.totalApprovedAmount);
                         toUpdate.attributes['Miscellaneous Expenses'] = parseFloat(toUpdate.attributes['Miscellaneous Expenses'] || 0);
                         toUpdate.attributes['Miscellaneous Expenses'] = toUpdate.attributes['Miscellaneous Expenses'] + parseFloat(updateObj.totalApprovedAmount);
-                        toUpdate.attributes['Pending Miscellaneous Expenses'] = toUpdate.attributes['Pending Miscellaneous Expenses'] || 0;
-                        toUpdate.attributes['Pending Miscellaneous Expenses'] = toUpdate.attributes['Pending Miscellaneous Expenses'] - 1;
-                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
-                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
+                        if (!updateObj.forceApprove) {
+                            toUpdate.attributes['Pending Miscellaneous Expenses'] = toUpdate.attributes['Pending Miscellaneous Expenses'] || 0;
+                            toUpdate.attributes['Pending Miscellaneous Expenses'] = toUpdate.attributes['Pending Miscellaneous Expenses'] - 1;
+                            toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
+                            toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
+                        }
                         return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
                     }).then(() => {
                         if ((projectObj.users || []).indexOf(expenseObj.userId) < 0) {
@@ -338,8 +340,8 @@ let service = {
                         expenseObj = dbObj || {};
                         projectId = dbObj.projectId || null;
                         return model.update({
-                            status:updateObj.status,
-                            totalApprovedAmount:null
+                            status: updateObj.status,
+                            totalApprovedAmount: null
                         });
                     })
                     .then((dbObj) => {

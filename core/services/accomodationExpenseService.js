@@ -294,10 +294,12 @@ let service = {
                         toUpdate.attributes['All Expenses'] = toUpdate.attributes['All Expenses'] + parseFloat(updateObj.totalApprovedAmount);
                         toUpdate.attributes['Accomodation Expenses'] = parseFloat(toUpdate.attributes['Accomodation Expenses'] || 0);
                         toUpdate.attributes['Accomodation Expenses'] = toUpdate.attributes['Accomodation Expenses'] + parseFloat(updateObj.totalApprovedAmount);
-                        toUpdate.attributes['Pending Accomodation Expenses'] = toUpdate.attributes['Pending Accomodation Expenses'] || 0;
-                        toUpdate.attributes['Pending Accomodation Expenses'] = toUpdate.attributes['Pending Accomodation Expenses'] - 1;
-                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
-                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
+                        if (!updateObj.forceApprove) {
+                            toUpdate.attributes['Pending Accomodation Expenses'] = toUpdate.attributes['Pending Accomodation Expenses'] || 0;
+                            toUpdate.attributes['Pending Accomodation Expenses'] = toUpdate.attributes['Pending Accomodation Expenses'] - 1;
+                            toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
+                            toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
+                        }
                         return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
                     }).then(() => {
                         if ((projectObj.users || []).indexOf(expenseObj.userId) < 0) {
@@ -343,8 +345,8 @@ let service = {
                         expenseObj = dbObj || {};
                         projectId = dbObj.projectId || null;
                         return model.update({
-                            status:updateObj.status,
-                            totalApprovedAmount:null
+                            status: updateObj.status,
+                            totalApprovedAmount: null
                         });
                     })
                     .then((dbObj) => {
@@ -369,7 +371,7 @@ let service = {
                     .then((user) => {
                         let attributes = user.attributes || {};
                         attributes['Balance'] = parseFloat(attributes['Balance'] || 0);
-                        attributes['Balance'] = attributes['Balance']  + parseFloat(expenseObj.totalApprovedAmount);
+                        attributes['Balance'] = attributes['Balance'] + parseFloat(expenseObj.totalApprovedAmount);
                         return userservice.update(_session, expenseObj.userId, {
                             attributes: attributes
                         });
