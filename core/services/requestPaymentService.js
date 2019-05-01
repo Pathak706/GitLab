@@ -226,7 +226,7 @@ let service = {
                 template["Id"] = "Id";
                 template["User"] = "User";
                 template["Description"] = "Description";
-                template["Attachment"] = "Attachment";
+                template["No. of Attachments"] = "No. of Attachments";
                 template["Amount"] = "Amount";
                 template["Approved Amount"] = "Approved Amount";
                 template["Status"] = "Status";
@@ -239,10 +239,10 @@ let service = {
                     obj["Id"] = model.getAttribute("id") || "";
                     obj["User"] = model.getAttribute("userName") || "";
                     obj["Description"] = model.getAttribute("description") || "";
-                    obj["No of bills"] = (model.getAttribute("files") || []).length;
+                    obj["No. of Attachments"] = (model.getAttribute("files") || []).length;
                     obj["Amount"] = model.getAttribute("totalAmount") || "";
                     obj["Approved Amount"] = model.getAttribute("totalApprovedAmount") || "";
-                    obj["Status"] = (model.getAttribute("attributes") || {}).approved || "";
+                    obj["Status"] = model.getAttribute("status") || "";
                     csv.push(obj)
                 }
                 resolve(csv);

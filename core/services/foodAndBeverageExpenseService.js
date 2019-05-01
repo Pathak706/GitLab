@@ -227,11 +227,11 @@ let service = {
                 template["User"] = "User";
                 template["Type"] = "Type";
                 template["No. of Person"] = "No. of Person";
-                template["No of bills"] = "No of bills";
+                template["No. of bills"] = "No. of bills";
                 template["Amount"] = "Amount";
+                template["GST Bill"] = "GST Bill";
                 template["Approved Amount"] = "Approved Amount";
                 template["Status"] = "Status";
-                let header = "Id,User,Type,No. of Person,No of Bills,Amount,Approved Amount,Status";
                 let csv = [];
                 for (var i = 0; i < expenses.length; i++) {
                     let projectModel = require('./../models/foodAndBeverageExpenseModel');
@@ -242,10 +242,11 @@ let service = {
                     obj["User"] = model.getAttribute("userName") || "";
                     obj["Type"] = model.getAttribute("type") || "";
                     obj["No. of Person"] = model.getAttribute("noOfPerson") || "";
-                    obj["No of bills"] = (model.getAttribute("files") || []).length;
+                    obj["No. of bills"] = (model.getAttribute("files") || []).length;
                     obj["Amount"] = model.getAttribute("totalAmount") || "";
+                    obj["GST Bill"] = model.getAttribute("gstBill") || "";
                     obj["Approved Amount"] = model.getAttribute("totalApprovedAmount") || "";
-                    obj["Status"] = (model.getAttribute("attributes") || {}).approved || "";
+                    obj["Status"] = model.getAttribute("status") || "";
                     csv.push(obj)
                 }
                 resolve(csv);
