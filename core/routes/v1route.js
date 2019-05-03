@@ -34,9 +34,9 @@ module.exports = (express) => {
     /* User Routes */
 
     /* Timesheet Routes */
-    versionRouter.post('/timesheets/signin', userservice.timeSheetSignIn);
-    versionRouter.post('/timesheets/signout', userservice.timeSheetSignOut);
-    versionRouter.get('/timesheets', userservice.getTimeSheet);
+    versionRouter.post('/timesheets/signin', jwt.verifyRequest, userservice.timeSheetSignIn);
+    versionRouter.post('/timesheets/signout', jwt.verifyRequest, userservice.timeSheetSignOut);
+    versionRouter.get('/timesheets', jwt.verifyRequest, userservice.getTimeSheet);
     /* Timesheet Routes */
 
 
