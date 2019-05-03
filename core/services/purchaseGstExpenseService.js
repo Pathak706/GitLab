@@ -50,8 +50,8 @@ let service = {
                         let toUpdate = {};
                         toUpdate['Pending Approvals'] = projectAttributes['Pending Approvals'] || 0;
                         toUpdate['Pending Approvals'] = toUpdate['Pending Approvals'] + 1;
-                        toUpdate['Pending Purchase Gst Expenses'] = projectAttributes['Pending Purchase Gst Expenses'] || 0;
-                        toUpdate['Pending Purchase Gst Expenses'] = toUpdate['Pending Purchase Gst Expenses'] + 1;
+                        toUpdate['Pending Purchase GST Expenses'] = projectAttributes['Pending Purchase GST Expenses'] || 0;
+                        toUpdate['Pending Purchase GST Expenses'] = toUpdate['Pending Purchase GST Expenses'] + 1;
                         return projectservice.updateAttributes(_session, body.projectId, toUpdate);
                     })
                     .then((projObj) => {
@@ -226,9 +226,9 @@ let service = {
                 template["Id"] = "Id";
                 template["User"] = "User";
                 template["Description"] = "Description";
-                template["No of bills"] = "No of bills";
-                template["GST Bill"] = "GST Bill";
+                template["No. of bills"] = "No. of bills";
                 template["Amount"] = "Amount";
+                template["GST Bill"] = "GST Bill";
                 template["Approved Amount"] = "Approved Amount";
                 template["Status"] = "Status";
                 let csv = [];
@@ -240,11 +240,11 @@ let service = {
                     obj["Id"] = model.getAttribute("id") || "";
                     obj["User"] = model.getAttribute("userName") || "";
                     obj["Description"] = model.getAttribute("description") || "";
-                    obj["No of bills"] = (model.getAttribute("files") || []).length;
-                    obj["GST Bill"] = model.getAttribute("gstBill") || "";
+                    obj["No. of bills"] = (model.getAttribute("files") || []).length;
                     obj["Amount"] = model.getAttribute("totalAmount") || "";
+                    obj["GST Bill"] = model.getAttribute("gstBill") || "";
                     obj["Approved Amount"] = model.getAttribute("totalApprovedAmount") || "";
-                    obj["Status"] = (model.getAttribute("attributes") || {}).approved || "";
+                    obj["Status"] = model.getAttribute("status") || "";
                     csv.push(obj)
                 }
                 resolve(csv);
@@ -288,12 +288,14 @@ let service = {
                         toUpdate.attributes = projectObj.attributes || {};
                         toUpdate.attributes['All Expenses'] = parseFloat(toUpdate.attributes['All Expenses'] || 0);
                         toUpdate.attributes['All Expenses'] = toUpdate.attributes['All Expenses'] + parseFloat(updateObj.totalApprovedAmount);
-                        toUpdate.attributes['Purchase Gst Expenses'] = parseFloat(toUpdate.attributes['Purchase Gst Expenses'] || 0);
-                        toUpdate.attributes['Purchase Gst Expenses'] = toUpdate.attributes['Purchase Gst Expenses'] + parseFloat(updateObj.totalApprovedAmount);
-                        toUpdate.attributes['Pending Purchase Gst Expenses'] = toUpdate.attributes['Pending Purchase Gst Expenses'] || 0;
-                        toUpdate.attributes['Pending Purchase Gst Expenses'] = toUpdate.attributes['Pending Purchase Gst Expenses'] - 1;
-                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
-                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
+                        toUpdate.attributes['Purchase GST Expenses'] = parseFloat(toUpdate.attributes['Purchase GST Expenses'] || 0);
+                        toUpdate.attributes['Purchase GST Expenses'] = toUpdate.attributes['Purchase GST Expenses'] + parseFloat(updateObj.totalApprovedAmount);
+                        if (!updateObj.forceApprove) {
+                            toUpdate.attributes['Pending Purchase GST Expenses'] = toUpdate.attributes['Pending Purchase GST Expenses'] || 0;
+                            toUpdate.attributes['Pending Purchase GST Expenses'] = toUpdate.attributes['Pending Purchase GST Expenses'] - 1;
+                            toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
+                            toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
+                        }
                         return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
                     }).then(() => {
                         if ((projectObj.users || []).indexOf(expenseObj.userId) < 0) {
@@ -304,8 +306,8 @@ let service = {
                     })
                     .then((user) => {
                         let attributes = user.attributes || {};
-                        attributes['balance'] = parseFloat(attributes['balance'] || 0);
-                        attributes['balance'] = attributes['balance'] - parseFloat(updateObj.totalApprovedAmount);
+                        attributes['Balance'] = parseFloat(attributes['Balance'] || 0);
+                        attributes['Balance'] = attributes['Balance'] - parseFloat(updateObj.totalApprovedAmount);
                         return userservice.update(_session, expenseObj.userId, {
                             attributes: attributes
                         });
@@ -330,7 +332,6 @@ let service = {
                 let body = {};
                 body.expenseId = expenseId || null;
                 updateObj.status = updateObj.status || "REJECTED";
-                updateObj.totalApprovedAmount = updateObj.totalApprovedAmount || 0;
                 let projectId = null;
                 let projectObj = null;
                 let expenseObj = null;
@@ -340,8 +341,8 @@ let service = {
                         expenseObj = dbObj || {};
                         projectId = dbObj.projectId || null;
                         return model.update({
-                            status:updateObj.status,
-                            totalApprovedAmount:null
+                            status: updateObj.status,
+                            totalApprovedAmount: null
                         });
                     })
                     .then((dbObj) => {
@@ -352,13 +353,9 @@ let service = {
                         let toUpdate = {};
                         toUpdate.attributes = projectObj.attributes || {};
                         toUpdate.attributes['All Expenses'] = parseFloat(toUpdate.attributes['All Expenses'] || 0);
-                        toUpdate.attributes['All Expenses'] = toUpdate.attributes['All Expenses'] - parseFloat(updateObj.totalApprovedAmount);
-                        toUpdate.attributes['Purchase Gst Expenses'] = parseFloat(toUpdate.attributes['Purchase Gst Expenses'] || 0);
-                        toUpdate.attributes['Purchase Gst Expenses'] = toUpdate.attributes['Purchase Gst Expenses'] - parseFloat(updateObj.totalApprovedAmount);
-                        // toUpdate.attributes['Pending Purchase Gst Expenses'] = toUpdate.attributes['Pending Purchase Gst Expenses'] || 0;
-                        // toUpdate.attributes['Pending Purchase Gst Expenses'] = toUpdate.attributes['Pending Purchase Gst Expenses'] - 1;
-                        // toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
-                        // toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
+                        toUpdate.attributes['All Expenses'] = toUpdate.attributes['All Expenses'] - parseFloat(expenseObj.totalApprovedAmount);
+                        toUpdate.attributes['Purchase GST Expenses'] = parseFloat(toUpdate.attributes['Purchase GST Expenses'] || 0);
+                        toUpdate.attributes['Purchase GST Expenses'] = toUpdate.attributes['Purchase GST Expenses'] - parseFloat(expenseObj.totalApprovedAmount);
                         return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
                     }).then(() => {
                         if ((projectObj.users || []).indexOf(expenseObj.userId) < 0) {
@@ -369,8 +366,8 @@ let service = {
                     })
                     .then((user) => {
                         let attributes = user.attributes || {};
-                        attributes['balance'] = parseFloat(attributes['balance'] || 0);
-                        attributes['balance'] = attributes['balance'] + parseFloat(updateObj.totalApprovedAmount);
+                        attributes['Balance'] = parseFloat(attributes['Balance'] || 0);
+                        attributes['Balance'] = attributes['Balance'] + parseFloat(expenseObj.totalApprovedAmount);
                         return userservice.update(_session, expenseObj.userId, {
                             attributes: attributes
                         });
@@ -407,8 +404,8 @@ let service = {
                     .then((projectObj) => {
                         let toUpdate = {};
                         toUpdate.attributes = projectObj.attributes || {};
-                        toUpdate.attributes['Pending Purchase Gst Expenses'] = toUpdate.attributes['Pending Purchase Gst Expenses'] || 0;
-                        toUpdate.attributes['Pending Purchase Gst Expenses'] = toUpdate.attributes['Pending Purchase Gst Expenses'] - 1;
+                        toUpdate.attributes['Pending Purchase GST Expenses'] = toUpdate.attributes['Pending Purchase GST Expenses'] || 0;
+                        toUpdate.attributes['Pending Purchase GST Expenses'] = toUpdate.attributes['Pending Purchase GST Expenses'] - 1;
                         toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
                         toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
                         return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);

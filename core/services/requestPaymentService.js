@@ -3,7 +3,7 @@ const utils = require("./../commons/utils");
 const _ = require("lodash");
 let service = {
     create: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let body = utils.clone(args[1] || {});
@@ -25,7 +25,7 @@ let service = {
                     reject(errors);
                 };
                 model.getNewInstance(body);
-                const requiredFields = [ 'projectId', 'userId', 'paymentId'];
+                const requiredFields = ['projectId', 'userId', 'paymentId'];
                 let projectAttributes = null;
                 model.getLatestId()
                     .then((prevId) => {
@@ -67,7 +67,7 @@ let service = {
         });
     },
     read: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let paymentId = args[1] || null;
@@ -87,7 +87,7 @@ let service = {
         });
     },
     update: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let paymentId = args[1] || null;
@@ -114,7 +114,7 @@ let service = {
         });
     },
     delete: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let paymentId = args[1] || null;
@@ -140,7 +140,7 @@ let service = {
         });
     },
     getPayments: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let body = args[1] || {};
@@ -165,7 +165,7 @@ let service = {
         });
     },
     updateAttributes: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let paymentId = args[1] || null;
@@ -190,7 +190,7 @@ let service = {
         });
     },
     deleteAttributes: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let paymentId = args[1] || null;
@@ -218,7 +218,7 @@ let service = {
         });
     },
     setExcelData: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let expenses = args[1] || {};
@@ -226,7 +226,7 @@ let service = {
                 template["Id"] = "Id";
                 template["User"] = "User";
                 template["Description"] = "Description";
-                template["Attachment"] = "Attachment";
+                template["No. of Attachments"] = "No. of Attachments";
                 template["Amount"] = "Amount";
                 template["Approved Amount"] = "Approved Amount";
                 template["Status"] = "Status";
@@ -239,10 +239,10 @@ let service = {
                     obj["Id"] = model.getAttribute("id") || "";
                     obj["User"] = model.getAttribute("userName") || "";
                     obj["Description"] = model.getAttribute("description") || "";
-                    obj["No of bills"] = (model.getAttribute("files") || []).length;
+                    obj["No. of Attachments"] = (model.getAttribute("files") || []).length;
                     obj["Amount"] = model.getAttribute("totalAmount") || "";
                     obj["Approved Amount"] = model.getAttribute("totalApprovedAmount") || "";
-                    obj["Status"] = (model.getAttribute("attributes") || {}).approved || "" ;
+                    obj["Status"] = model.getAttribute("status") || "";
                     csv.push(obj)
                 }
                 resolve(csv);
@@ -286,8 +286,12 @@ let service = {
                         toUpdate.attributes = projectObj.attributes || {};
                         toUpdate.attributes['Payment Requests'] = parseFloat(toUpdate.attributes['Payment Requests'] || 0);
                         toUpdate.attributes['Payment Requests'] = toUpdate.attributes['Payment Requests'] + parseFloat(updateObj.totalApprovedAmount);
-                        toUpdate.attributes['Pending Payment Requests'] = toUpdate.attributes['Pending Payment Requests'] || 0;
-                        toUpdate.attributes['Pending Payment Requests'] = toUpdate.attributes['Pending Payment Requests'] - 1;
+                        if (!updateObj.forceApprove) {
+                            toUpdate.attributes['Pending Payment Requests'] = toUpdate.attributes['Pending Payment Requests'] || 0;
+                            toUpdate.attributes['Pending Payment Requests'] = toUpdate.attributes['Pending Payment Requests'] - 1;
+                            toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
+                            toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
+                        }
                         return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
                     }).then(() => {
                         if ((projectObj.users || []).indexOf(expenseObj.userId) < 0) {
@@ -298,8 +302,8 @@ let service = {
                     })
                     .then((user) => {
                         let attributes = user.attributes || {};
-                        attributes['balance'] = parseFloat(attributes['balance'] || 0);
-                        attributes['balance'] = attributes['balance'] + parseFloat(updateObj.totalApprovedAmount);
+                        attributes['Balance'] = parseFloat(attributes['Balance'] || 0);
+                        attributes['Balance'] = attributes['Balance'] + parseFloat(updateObj.totalApprovedAmount);
                         return userservice.update(_session, expenseObj.userId, {
                             attributes: attributes
                         });
@@ -324,7 +328,6 @@ let service = {
                 let body = {};
                 body.paymentId = paymentId || null;
                 updateObj.status = updateObj.status || "REJECTED";
-                updateObj.totalApprovedAmount = updateObj.totalApprovedAmount || 0;
                 let projectId = null;
                 let projectObj = null;
                 let expenseObj = null;
@@ -334,8 +337,8 @@ let service = {
                         expenseObj = dbObj || {};
                         projectId = dbObj.projectId || null;
                         return model.update({
-                            status:updateObj.status,
-                            totalApprovedAmount:null
+                            status: updateObj.status,
+                            totalApprovedAmount: null
                         });
                     })
                     .then((dbObj) => {
@@ -346,7 +349,7 @@ let service = {
                         let toUpdate = {};
                         toUpdate.attributes = projectObj.attributes || {};
                         toUpdate.attributes['Payment Requests'] = parseFloat(toUpdate.attributes['Payment Requests'] || 0);
-                        toUpdate.attributes['Payment Requests'] = toUpdate.attributes['Payment Requests'] - parseFloat(updateObj.totalApprovedAmount);
+                        toUpdate.attributes['Payment Requests'] = toUpdate.attributes['Payment Requests'] - parseFloat(expenseObj.totalApprovedAmount);
                         return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
                     }).then(() => {
                         if ((projectObj.users || []).indexOf(expenseObj.userId) < 0) {
@@ -357,8 +360,8 @@ let service = {
                     })
                     .then((user) => {
                         let attributes = user.attributes || {};
-                        attributes['balance'] = parseFloat(attributes['balance'] || 0);
-                        attributes['balance'] = attributes['balance'] - parseFloat(updateObj.totalApprovedAmount);
+                        attributes['Balance'] = parseFloat(attributes['Balance'] || 0);
+                        attributes['Balance'] = attributes['Balance'] - parseFloat(expenseObj.totalApprovedAmount);
                         return userservice.update(_session, expenseObj.userId, {
                             attributes: attributes
                         });
@@ -397,6 +400,8 @@ let service = {
                         toUpdate.attributes = projectObj.attributes || {};
                         toUpdate.attributes['Pending Payment Requests'] = toUpdate.attributes['Pending Payment Requests'] || 0;
                         toUpdate.attributes['Pending Payment Requests'] = toUpdate.attributes['Pending Payment Requests'] - 1;
+                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
+                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
                         return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
                     })
                     .then(resolve, reject);

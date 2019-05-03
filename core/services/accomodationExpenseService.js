@@ -229,9 +229,9 @@ let service = {
                 template["User"] = "User";
                 template["Hotel Name"] = "Hotel Name";
                 template["No. of Person"] = "No. of Person";
-                template["No of bills"] = "No of bills";
-                template["GST Bill"] = "GST Bill";
+                template["No. of bills"] = "No. of bills";
                 template["Amount"] = "Amount";
+                template["GST Bill"] = "GST Bill";
                 template["Approved Amount"] = "Approved Amount";
                 template["Status"] = "Status";
                 let csv = [];
@@ -244,11 +244,11 @@ let service = {
                     obj["User"] = model.getAttribute("userName") || "";
                     obj["Hotel Name"] = model.getAttribute("hotelName") || "";
                     obj["No. of Person"] = model.getAttribute("noOfPerson") || "";
-                    obj["No of bills"] = (model.getAttribute("files") || []).length;
-                    obj["GST Bill"] = model.getAttribute("gstBill") || "";
+                    obj["No. of bills"] = (model.getAttribute("files") || []).length;
                     obj["Amount"] = model.getAttribute("totalAmount") || "";
+                    obj["GST Bill"] = model.getAttribute("gstBill") || "";
                     obj["Approved Amount"] = model.getAttribute("totalApprovedAmount") || "";
-                    obj["Status"] = (model.getAttribute("attributes") || {}).approved || "";
+                    obj["Status"] = model.getAttribute("status") || "";
                     csv.push(obj)
                 }
                 resolve(csv);
@@ -294,10 +294,12 @@ let service = {
                         toUpdate.attributes['All Expenses'] = toUpdate.attributes['All Expenses'] + parseFloat(updateObj.totalApprovedAmount);
                         toUpdate.attributes['Accomodation Expenses'] = parseFloat(toUpdate.attributes['Accomodation Expenses'] || 0);
                         toUpdate.attributes['Accomodation Expenses'] = toUpdate.attributes['Accomodation Expenses'] + parseFloat(updateObj.totalApprovedAmount);
-                        toUpdate.attributes['Pending Accomodation Expenses'] = toUpdate.attributes['Pending Accomodation Expenses'] || 0;
-                        toUpdate.attributes['Pending Accomodation Expenses'] = toUpdate.attributes['Pending Accomodation Expenses'] - 1;
-                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
-                        toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
+                        if (!updateObj.forceApprove) {
+                            toUpdate.attributes['Pending Accomodation Expenses'] = toUpdate.attributes['Pending Accomodation Expenses'] || 0;
+                            toUpdate.attributes['Pending Accomodation Expenses'] = toUpdate.attributes['Pending Accomodation Expenses'] - 1;
+                            toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
+                            toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
+                        }
                         return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
                     }).then(() => {
                         if ((projectObj.users || []).indexOf(expenseObj.userId) < 0) {
@@ -308,8 +310,8 @@ let service = {
                     })
                     .then((user) => {
                         let attributes = user.attributes || {};
-                        attributes['balance'] = parseFloat(attributes['balance'] || 0);
-                        attributes['balance'] = attributes['balance'] - parseFloat(updateObj.totalApprovedAmount);
+                        attributes['Balance'] = parseFloat(attributes['Balance'] || 0);
+                        attributes['Balance'] = attributes['Balance'] - parseFloat(updateObj.totalApprovedAmount);
                         return userservice.update(_session, expenseObj.userId, {
                             attributes: attributes
                         });
@@ -334,7 +336,6 @@ let service = {
                 let body = {};
                 body.expenseId = expenseId || null;
                 updateObj.status = updateObj.status || "REJECTED";
-                updateObj.totalApprovedAmount = updateObj.totalApprovedAmount || 0;
                 let projectId = null;
                 let projectObj = null;
                 let expenseObj = null;
@@ -344,8 +345,8 @@ let service = {
                         expenseObj = dbObj || {};
                         projectId = dbObj.projectId || null;
                         return model.update({
-                            status:updateObj.status,
-                            totalApprovedAmount:null
+                            status: updateObj.status,
+                            totalApprovedAmount: null
                         });
                     })
                     .then((dbObj) => {
@@ -356,13 +357,9 @@ let service = {
                         let toUpdate = {};
                         toUpdate.attributes = projectObj.attributes || {};
                         toUpdate.attributes['All Expenses'] = parseFloat(toUpdate.attributes['All Expenses'] || 0);
-                        toUpdate.attributes['All Expenses'] = toUpdate.attributes['All Expenses'] - parseFloat(updateObj.totalApprovedAmount);
+                        toUpdate.attributes['All Expenses'] = toUpdate.attributes['All Expenses'] - parseFloat(expenseObj.totalApprovedAmount);
                         toUpdate.attributes['Accomodation Expenses'] = parseFloat(toUpdate.attributes['Accomodation Expenses'] || 0);
-                        toUpdate.attributes['Accomodation Expenses'] = toUpdate.attributes['Accomodation Expenses'] - parseFloat(updateObj.totalApprovedAmount);
-                        // toUpdate.attributes['Pending Accomodation Expenses'] = toUpdate.attributes['Pending Accomodation Expenses'] || 0;
-                        // toUpdate.attributes['Pending Accomodation Expenses'] = toUpdate.attributes['Pending Accomodation Expenses'] - 1;
-                        // toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] || 0;
-                        // toUpdate.attributes['Pending Approvals'] = toUpdate.attributes['Pending Approvals'] - 1;
+                        toUpdate.attributes['Accomodation Expenses'] = toUpdate.attributes['Accomodation Expenses'] - parseFloat(expenseObj.totalApprovedAmount);
                         return projectservice.updateAttributes(_session, projectId, toUpdate.attributes);
                     }).then(() => {
                         if ((projectObj.users || []).indexOf(expenseObj.userId) < 0) {
@@ -373,8 +370,8 @@ let service = {
                     })
                     .then((user) => {
                         let attributes = user.attributes || {};
-                        attributes['balance'] = parseFloat(attributes['balance'] || 0);
-                        attributes['balance'] = attributes['balance']  + parseFloat(updateObj.totalApprovedAmount);
+                        attributes['Balance'] = parseFloat(attributes['Balance'] || 0);
+                        attributes['Balance'] = attributes['Balance'] + parseFloat(expenseObj.totalApprovedAmount);
                         return userservice.update(_session, expenseObj.userId, {
                             attributes: attributes
                         });

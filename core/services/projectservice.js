@@ -5,7 +5,7 @@ const fs = require('fs')
 let pv = require("./../commons/passwordVerification");
 let service = {
     create: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let body = args[1] || {};
@@ -46,7 +46,7 @@ let service = {
         });
     },
     read: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let projectId = args[1] || null;
@@ -63,7 +63,7 @@ let service = {
         });
     },
     update: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let projectId = args[1] || null;
@@ -87,7 +87,7 @@ let service = {
         });
     },
     updateAttributes: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let projectId = args[1] || null;
@@ -112,7 +112,7 @@ let service = {
         });
     },
     deleteAttributes: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let projectId = args[1] || null;
@@ -140,7 +140,7 @@ let service = {
         });
     },
     delete: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let projectId = args[1] || null;
@@ -163,7 +163,7 @@ let service = {
         });
     },
     getProjects: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let body = args[1] || {};
@@ -194,7 +194,7 @@ let service = {
         });
     },
     getProjectUsers: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let projectId = args[1].projectId || null;
@@ -206,7 +206,7 @@ let service = {
 
                 function readAllUsers(project) {
                     let userservice = require('./userservice').service;
-                    return new Promise(async function(resolve, reject) {
+                    return new Promise(async function (resolve, reject) {
                         let userObjs = {};
                         let projUser = [];
                         let users = project.users || []
@@ -239,41 +239,39 @@ let service = {
         });
     },
     getProjectExcel: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 function getExpensesOfEachType(projects) {
-                    let expenses = [ {
+                    let expenses = [{
                         type: "Transportation Expenses",
                         get: require('./transportationExpenseService').service.getExpenses,
                         excel: require('./transportationExpenseService').service.setExcelData
-                    },{
-                            type: "Accomodation Expenses",
-                            get: require('./accomodationExpenseService').service.getExpenses,
-                            excel: require('./accomodationExpenseService').service.setExcelData
-                        }, {
-                            type: "Food And Beverage Expenses",
-                            get: require('./foodAndBeverageExpenseService').service.getExpenses,
-                            excel: require('./foodAndBeverageExpenseService').service.setExcelData
-                        }, {
-                            type: "Miscellaneous Expenses",
-                            get: require('./miscellaneousExpenseService').service.getExpenses,
-                            excel: require('./miscellaneousExpenseService').service.setExcelData
-                        }, {
-                            type: "Purchase GST Expenses",
-                            get: require('./purchaseGstExpenseService').service.getExpenses,
-                            excel: require('./purchaseGstExpenseService').service.setExcelData
-                        }, {
-                            type: "Local Conveyance Expenses",
-                            get: require('./localConveyanceExpenseService').service.getExpenses,
-                            excel: require('./localConveyanceExpenseService').service.setExcelData
-                        }, {
-                            type: "Payment Requests",
-                            get: require('./requestPaymentService').service.getPayments,
-                            excel: require('./requestPaymentService').service.setExcelData
-                        }
-
-                    ];
-                    return new Promise(async function(resolve, rej) {
+                    }, {
+                        type: "Accomodation Expenses",
+                        get: require('./accomodationExpenseService').service.getExpenses,
+                        excel: require('./accomodationExpenseService').service.setExcelData
+                    }, {
+                        type: "Food And Beverage Expenses",
+                        get: require('./foodAndBeverageExpenseService').service.getExpenses,
+                        excel: require('./foodAndBeverageExpenseService').service.setExcelData
+                    }, {
+                        type: "Miscellaneous Expenses",
+                        get: require('./miscellaneousExpenseService').service.getExpenses,
+                        excel: require('./miscellaneousExpenseService').service.setExcelData
+                    }, {
+                        type: "Purchase GST Expenses",
+                        get: require('./purchaseGstExpenseService').service.getExpenses,
+                        excel: require('./purchaseGstExpenseService').service.setExcelData
+                    }, {
+                        type: "Local Conveyance Expenses",
+                        get: require('./localConveyanceExpenseService').service.getExpenses,
+                        excel: require('./localConveyanceExpenseService').service.setExcelData
+                    }, {
+                        type: "Payment Requests",
+                        get: require('./requestPaymentService').service.getPayments,
+                        excel: require('./requestPaymentService').service.setExcelData
+                    }];
+                    return new Promise(async function (resolve, rej) {
                         for (var j = 0; j < projects.length; j++) {
                             let projectExpenses = [];
                             for (var i = 0; i < expenses.length; i++) {

@@ -49,8 +49,10 @@ function formatExcel(projects) {
         mainSheet.getCell('A8').value = "Status";
         mainSheet.getCell('B8').value = (project.attributes || {}).Status || (project.attributes || {}).status || "";
 
+        /*
         mainSheet.getCell('A10').value = "Users";
         mainSheet.getCell('B10').value = "";
+        */
 
         mainSheet.getCell('D3').value = "All Expenses";
         let typeStartCol = 4
@@ -72,7 +74,9 @@ function formatExcel(projects) {
                 let sum = 0;
                 for (var k = 0; k < expense.data.length; k++) {
                     sum = sum + parseFloat(expense.data[k].Amount || "0")
-                    totalSum = totalSum + parseFloat(expense.data[k].Amount || "0")
+                    if(expense.type != 'Payment Requests'){
+                        totalSum = totalSum + parseFloat(expense.data[k].Amount || "0")
+                    }
                 }
                 mainSheet.getCell('E' + typeStartCol).value = sum;
 
