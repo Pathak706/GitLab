@@ -31,8 +31,14 @@ module.exports = (express) => {
     versionRouter.get('/users', jwt.verifyRequest, userservice.getUsers);
     versionRouter.put('/users/:userId/attributes', jwt.verifyRequest, userservice.updateAttributes);
     versionRouter.delete('/users/:userId/attributes', jwt.verifyRequest, userservice.deleteAttributes);
-    //versionRouter.delete('/users/:userId', userservice.delete);
     /* User Routes */
+
+    /* Timesheet Routes */
+    versionRouter.post('/timesheets/signin', userservice.timeSheetSignIn);
+    versionRouter.post('/timesheets/signout', userservice.timeSheetSignOut);
+    versionRouter.get('/timesheets', userservice.getTimeSheet);
+    /* Timesheet Routes */
+
 
     /* Project Routes */
     versionRouter.post('/projects', jwt.verifyRequest, projectservice.create);

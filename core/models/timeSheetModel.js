@@ -5,24 +5,23 @@ module.exports = model = class model {
     constructor(object) {
         let instance = this;
         instance._session = object || {};
-        instance.tableName = 'users'
+        instance.tableName = 'timesheet'
     };
     getNewInstance(values) {
         let instance = this;
         try {
             instance.dbObject = {};
+            instance.dbObject.timesheetId = null;
             instance.dbObject.id = null;
             instance.dbObject.userId = null;
-            instance.dbObject.firstName = null;
-            instance.dbObject.lastName = null;
-            instance.dbObject.permissions = null;
-            instance.dbObject.mobile = null;
-            instance.dbObject.email = null;
-            instance.dbObject.gender = null;
-            instance.dbObject.password = null;
-            instance.dbObject.passwordResetAt = null;
-            instance.dbObject.attributes = null;
-            instance.dbObject.timesheetId = null;
+            instance.dbObject.signInTime = null;
+            instance.dbObject.year = null;
+            instance.dbObject.month = null;
+            instance.dbObject.day = null;
+            instance.dbObject.signInLocation = null;
+            instance.dbObject.signOutLocation = null;
+            instance.dbObject.totalMins = null;
+            instance.dbObject.signOutTime = null;
             instance.dbObject.created_at = null;
             instance.dbObject.updated_at = null;
             instance.dbObject.created_by = null;
@@ -71,7 +70,7 @@ module.exports = model = class model {
     };
     validate(requiredFields) {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let obj = instance.dbObject || {};
                 let errors = [];
@@ -97,7 +96,7 @@ module.exports = model = class model {
     }
     create() {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             instance.dbObject.created_at = new Date().getTime();
             instance.dbObject.updated_at = new Date().getTime();
             instance.dbObject.created_by = (instance._session || {}).userId || null;
@@ -134,7 +133,7 @@ module.exports = model = class model {
     }
     getLatestId() {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             let key = {
                 id: "1"
             }
@@ -155,9 +154,9 @@ module.exports = model = class model {
     }
     read() {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             let key = {
-                userId: (instance.dbObject || {}).userId || null
+                timesheetId: (instance.dbObject || {}).timesheetId || null
             }
             let readCallback = (err, result) => {
                 if (err) {
@@ -179,37 +178,12 @@ module.exports = model = class model {
             });
         });
     }
-    readFull() {
-        let instance = this;
-        return new Promise(function(resolve, reject) {
-            let key = {
-                userId: (instance.dbObject || {}).userId || null
-            }
-            let readCallback = (err, result) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    if (result === null || !Object.keys(result).length) {
-                        reject([rs.notfound]);
-                    } else {
-                        let out = instance.getNewInstance(result);
-                        resolve(out.dbObject);
-                    }
-                }
-            }
-            initDatabases('expensemanager').then((db) => {
-                db.collection(instance.tableName).findOne(key, readCallback);
-            }).catch(err => {
-                reject(err);
-            });
-        });
-    }
     update(values) {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             let toSet = {};
             let findQuery = {
-                userId: (instance.dbObject || {}).userId || null
+                timesheetId: (instance.dbObject || {}).timesheetId || null
             }
             if (!!values && typeof values === "object" && Object.keys(values).length) {
                 Object.keys(instance.dbObject).forEach((key) => {
@@ -244,9 +218,9 @@ module.exports = model = class model {
     }
     delete() {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             let key = {
-                userId: (instance.dbObject || {}).userId || null
+                timesheetId: (instance.dbObject || {}).timesheetId || null
             }
             let removeCallback = (err, result) => {
                 if (err) {
@@ -262,33 +236,7 @@ module.exports = model = class model {
             });
         });
     }
-    readUniqueUser() {
-        let instance = this;
-        return new Promise(function(resolve, reject) {
-            let key = {
-                mobile: (instance.dbObject || {}).mobile
-            }
-            let readCallback = (err, result) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    if (result === null || !Object.keys(result).length) {
-                        reject([rs.notfound]);
-                    } else {
-                        let out = instance.getNewInstance(result);
-                        delete out.dbObject.password;
-                        resolve(out.dbObject);
-                    }
-                }
-            }
-            initDatabases('expensemanager').then((db) => {
-                db.collection(instance.tableName).findOne(key, readCallback);
-            }).catch(err => {
-                reject(err);
-            });
-        });
-    }
-    getUsers(query) {
+    getTimesheets(query) {
         let instance = this;
         return new Promise(function(resolve, reject) {
             let key = query;
@@ -300,43 +248,7 @@ module.exports = model = class model {
                 }
             }
             initDatabases('expensemanager').then((db) => {
-                db.collection(instance.tableName).find(key).project({
-                    password: 0,
-                    permissions: 0
-                }).toArray(readCallback);
-            }).catch(err => {
-                reject(err);
-            });
-        });
-    }
-    signInRead() {
-        let instance = this;
-        return new Promise(function(resolve, reject) {
-            let key = {};
-            if (!!instance.dbObject.mobile) {
-                key['mobile'] = instance.dbObject.mobile;
-                //key['isMobileVerified'] = true;
-            } else if (!!instance.dbObject.email) {
-                key['email'] = instance.dbObject.email
-                //key['isEmailVerified'] = true;
-            } else {
-                reject([rs.notfound]);
-                return;
-            }
-            let readCallback = (err, result) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    if (result === null || !Object.keys(result).length) {
-                        reject([rs.notfound]);
-                    } else {
-                        let out = instance.getNewInstance(result);
-                        resolve(out.dbObject);
-                    }
-                }
-            }
-            initDatabases('expensemanager').then((db) => {
-                db.collection(instance.tableName).findOne(key, readCallback);
+                db.collection(instance.tableName).find(key).toArray(readCallback);
             }).catch(err => {
                 reject(err);
             });
