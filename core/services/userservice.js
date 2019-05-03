@@ -241,8 +241,6 @@ let service = {
                                 message: "Please Signout First"
                             }]);
                         } else {
-
-                            let requiredFields = []
                             return tsmodel.getLatestId()
                         }
                     })
@@ -262,7 +260,7 @@ let service = {
                         }
                         tsBody.id = (parseInt(prevId) + 1).toString();
                         tsmodel.getNewInstance(tsBody);
-                        return tsmodel.validate(requiredFields)
+                        return tsmodel.validate([])
                     })
                     .then(() => tsmodel.create())
                     .then(() => {
