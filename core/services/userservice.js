@@ -335,14 +335,12 @@ let service = {
         return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
-                let userId = _session.userId || null;
                 let query = args[1] || {};
                 let timeSheetModel = require('./../models/timeSheetModel');
                 let tsmodel = new timeSheetModel(_session);
-                query.date = !!query.date ? parseInt(query.date) : null;
-                query.month = !!query.month ? parseInt(query.month) : null;
-                query.year = !!query.year ? parseInt(query.year) : null;
-                query.userId = userId;
+                query.date = query.date || null;
+                query.month = query.month || null;
+                query.year = query.year || null;
                 if (!query.date)
                     delete query.date;
                 if (!query.month)
