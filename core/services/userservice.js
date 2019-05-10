@@ -249,8 +249,8 @@ let service = {
                         let tsBody = {
                             "timesheetId": timesheetId,
                             "year": (new Date().getFullYear()).toString(),
-                            "month": (new Date().getMonth() + 1).toString(),
-                            "day": (new Date().getDate()).toString(),
+                            "month": ('0' + (new Date().getMonth() + 1)).slice(-2).toString(),
+                            "day": ('0' + (new Date().getDate() + 1)).slice(-2).toString(),
                             "userId": "ca4c45f0-4af5-11e9-bb49-4b08cfa293da",
                             "signInTime": new Date().getTime(),
                             "signInLocation": _body.location || "",

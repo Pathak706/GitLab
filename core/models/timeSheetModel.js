@@ -17,7 +17,7 @@ module.exports = model = class model {
             instance.dbObject.signInTime = null;
             instance.dbObject.year = null;
             instance.dbObject.month = null;
-            instance.dbObject.day = null;
+            instance.dbObject.date = null;
             instance.dbObject.signInLocation = null;
             instance.dbObject.signOutLocation = null;
             instance.dbObject.totalMins = null;
