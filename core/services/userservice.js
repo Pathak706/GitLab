@@ -251,7 +251,7 @@ let service = {
                             "year": (new Date().getFullYear()).toString(),
                             "month": ('0' + (new Date().getMonth() + 1)).slice(-2).toString(),
                             "date": ('0' + new Date().getDate()).slice(-2).toString(),
-                            "userId": "ca4c45f0-4af5-11e9-bb49-4b08cfa293da",
+                            "userId": userId,
                             "signInTime": new Date().getTime(),
                             "signInLocation": _body.location || "",
                             "signOutTime": null,
