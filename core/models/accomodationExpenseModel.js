@@ -20,7 +20,7 @@ module.exports = model = class model {
             instance.dbObject.files = null;
             instance.dbObject.attributes = null;
 
-
+            instance.dbObject.payment = null;
             instance.dbObject.expenseDate = null;
             instance.dbObject.hotelName = null;
             instance.dbObject.noOfPerson = null;
