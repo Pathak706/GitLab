@@ -3,7 +3,7 @@ const utils = require("./../commons/utils");
 const _ = require("lodash");
 let service = {
     create: (...args) => {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let body = utils.clone(args[1] || {});
@@ -67,7 +67,7 @@ let service = {
         });
     },
     read: (...args) => {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let paymentId = args[1] || null;
@@ -87,7 +87,7 @@ let service = {
         });
     },
     update: (...args) => {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let paymentId = args[1] || null;
@@ -114,7 +114,7 @@ let service = {
         });
     },
     delete: (...args) => {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let paymentId = args[1] || null;
@@ -140,7 +140,7 @@ let service = {
         });
     },
     getPayments: (...args) => {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let body = args[1] || {};
@@ -165,7 +165,7 @@ let service = {
         });
     },
     updateAttributes: (...args) => {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let paymentId = args[1] || null;
@@ -190,7 +190,7 @@ let service = {
         });
     },
     deleteAttributes: (...args) => {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let paymentId = args[1] || null;
@@ -218,7 +218,7 @@ let service = {
         });
     },
     setExcelData: (...args) => {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let expenses = args[1] || {};
@@ -254,7 +254,7 @@ let service = {
         });
     },
     approvePayment: (...args) => {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let paymentId = args[1] || null;
@@ -316,12 +316,12 @@ let service = {
         });
     },
     forceRejectPayment: (...args) => {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let paymentId = args[1] || null;
                 let updateObj = args[2] || {};
-                let projectModel = require('./../models/transportationExpenseModel');
+                let projectModel = require('./../models/requestPaymentModel');
                 let projectservice = require('./projectservice').service;
                 let userservice = require('./userservice').service;
                 let model = new projectModel(_session);
@@ -374,12 +374,12 @@ let service = {
         });
     },
     rejectPayment: (...args) => {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let paymentId = args[1] || null;
                 let updateObj = {};
-                let projectModel = require('./../models/transportationExpenseModel');
+                let projectModel = require('./../models/requestPaymentModel');
                 let projectservice = require('./projectservice').service;
                 let model = new projectModel(_session);
                 let body = {};
