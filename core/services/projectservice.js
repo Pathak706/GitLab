@@ -322,8 +322,9 @@ let service = {
             try {
                 let _session = args[0] || {};
                 let projectId = args[1] || null;
-                let userId = args[2].user || null;
+                let body = args[2] || {};
 
+                console.log("body",body);
                 let transportationExpenseModel = require('./../models/transportationExpenseModel');
                 let accomodationExpenseModel = require('./../models/accomodationExpenseModel');
                 let foodAndBeverageExpenseModel = require('./../models/foodAndBeverageExpenseModel');
@@ -338,14 +339,17 @@ let service = {
                 let miscellaneousExpense = new miscellaneousExpenseModel(_session);
                 let purchaseGstExpense = new purchaseGstExpenseModel(_session);
                 
-                let body = {};
+                // 
                 body.projectId = projectId || null;
                 body.userId = {$match: { userId : /.*/g}};
-                if (!!userId) {
-                    body.userId = {
-                        $match: { userId : userId}
+                if (!!body.users) {
+                    body.userId = { 
+                        $match: {
+                                userId: { $in: body.users.split(",") },
+                        }
                     };
                 }
+                console.log("users",body);
 
                 transprotationExpense.getNewInstance(body);
                 accomodationExpense.getNewInstance(body);
