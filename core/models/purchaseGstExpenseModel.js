@@ -262,7 +262,7 @@ module.exports = model = class model {
         });
     }
 
-    getProjectTotalExpense() {
+    getProjectTotalExpense(query) {
         let instance = this;
         return new Promise(function (resolve, reject) {
             let key = {
@@ -272,11 +272,12 @@ module.exports = model = class model {
                 if (err) {
                     reject(err)
                 } else {
-                    resolve(result[0] || {});
+                    resolve(result[0] || []);
                 }
             }
             initDatabases('expensemanager').then((db) => {
                 db.collection(instance.tableName).aggregate([
+                    query.userId,
                     {$group: { 
                         _id: instance.tableName,
                          totalAmount: {$sum: { $toInt: {
@@ -300,5 +301,4 @@ module.exports = model = class model {
             });
         }); 
     }
-    
 }

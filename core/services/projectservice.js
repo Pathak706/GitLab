@@ -322,6 +322,8 @@ let service = {
             try {
                 let _session = args[0] || {};
                 let projectId = args[1] || null;
+                let userId = args[2].user || null;
+
                 let transportationExpenseModel = require('./../models/transportationExpenseModel');
                 let accomodationExpenseModel = require('./../models/accomodationExpenseModel');
                 let foodAndBeverageExpenseModel = require('./../models/foodAndBeverageExpenseModel');
@@ -338,6 +340,12 @@ let service = {
                 
                 let body = {};
                 body.projectId = projectId || null;
+                body.userId = {$match: { userId : /.*/g}};
+                if (!!userId) {
+                    body.userId = {
+                        $match: { userId : userId}
+                    };
+                }
 
                 transprotationExpense.getNewInstance(body);
                 accomodationExpense.getNewInstance(body);
@@ -347,12 +355,12 @@ let service = {
                 purchaseGstExpense.getNewInstance(body);
 
                 const asyncFunctions = [
-                    transprotationExpense.getProjectTotalExpense(),
-                    accomodationExpense.getProjectTotalExpense(),
-                    foodAndBeverageExpense.getProjectTotalExpense(),
-                    localConveyanceExpense.getProjectTotalExpense(),
-                    miscellaneousExpense.getProjectTotalExpense(),
-                    purchaseGstExpense.getProjectTotalExpense()
+                    transprotationExpense.getProjectTotalExpense(body),
+                    accomodationExpense.getProjectTotalExpense(body),
+                    foodAndBeverageExpense.getProjectTotalExpense(body),
+                    localConveyanceExpense.getProjectTotalExpense(body),
+                    miscellaneousExpense.getProjectTotalExpense(body),
+                    purchaseGstExpense.getProjectTotalExpense(body)
                 ];
                 const arrayToObject = (array, keyField) =>
                 array.reduce((obj, item) => {
@@ -363,7 +371,6 @@ let service = {
                 const arrayOfObj =  arrayToObject(
                                         await Promise.all(asyncFunctions), "_id")
                                         
-                console.log("totalExpense = ", arrayOfObj);
                 resolve(arrayOfObj);
             } catch (e) {
                 console.error(e)
@@ -485,8 +492,7 @@ let router = {
                 allExpensesSum: data
             })
         };
-        console.log("req.params.projectId",req.params.projectId);
-        service.allExpensesSum(req.session, req.params.projectId).then(successCB, next);
+        service.allExpensesSum(req.session, req.params.projectId, req.query).then(successCB, next);
     }
 };
 module.exports.service = service;

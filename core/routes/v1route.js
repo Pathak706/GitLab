@@ -61,7 +61,7 @@ module.exports = (express) => {
     versionRouter.delete('/projects/:projectId/attributes', jwt.verifyRequest, projectservice.deleteAttributes);
     
     /* Project Routes */
-    versionRouter.post("/projects/:projectId/allExpensesSum", jwt.verifyRequest, projectservice.allExpensesSum);
+    versionRouter.get("/projects/:projectId/allExpensesSum", jwt.verifyRequest, projectservice.allExpensesSum);
 
 
     /* Expenses Routes */
