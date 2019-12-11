@@ -5,8 +5,8 @@ module.exports = {
         databases: [{
             endpoint: "mongodb://%s:%s@localhost:27017",
             dbname: "expensemanager",
-            username: "ndttExpenseManager",
-            password: "ndttPassword@$^Expense",
+            username: "",
+            password: "",
             authMechanism: "DEFAULT"
         }]
     }

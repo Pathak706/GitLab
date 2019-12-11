@@ -260,4 +260,57 @@ module.exports = model = class model {
             });
         });
     }
+
+    getProjectTotalExpense() {
+        let instance = this;
+        return new Promise(function (resolve, reject) {
+            let key = {
+                $eq: ["$projectId", (instance.dbObject || {}).projectId || null]
+            }
+            let readCallback = (err, result) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(result[0] || []);
+                }
+            }
+            initDatabases('expensemanager').then((db) => {
+                // db.collection(instance.tableName).find(key).toArray(readCallback);
+                db.collection(instance.tableName).aggregate([
+                    {$group: { 
+                        _id: instance.tableName,
+                        // totalValue: {$sum: {$toInt: "$totalAmount"}},
+                         totalAmount: {$sum: { $toInt: {
+                             $cond: [
+                                 // Condition to test 
+                                //  {$eq: ["$expenseId", "643d2890-5538-11e9-bb49-4b08cfa293da"] },
+                                key,
+                                 // True
+                                 "$totalAmount",
+                                 
+                                 // False
+                                 0
+                            ] 
+                         }}},
+                         totalApprovedAmount: {$sum: { $toInt: {
+                            $cond: [
+                                // Condition to test 
+                               //  {$eq: ["$expenseId", "643d2890-5538-11e9-bb49-4b08cfa293da"] },
+                               key,
+                                // True
+                                "$totalApprovedAmount",
+                                
+                                // False
+                                0
+                           ] 
+                        }}}
+
+                    }}
+                ]).toArray(readCallback);
+            }).catch(err => {
+                reject(err);
+            });
+        }); 
+    }
+    
 }

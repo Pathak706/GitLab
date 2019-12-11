@@ -315,6 +315,62 @@ let service = {
                 reject(e);
             }
         });
+    },
+
+    allExpensesSum: (...args) => {
+        return new Promise(async function (resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let projectId = args[1] || null;
+                let transportationExpenseModel = require('./../models/transportationExpenseModel');
+                let accomodationExpenseModel = require('./../models/accomodationExpenseModel');
+                let foodAndBeverageExpenseModel = require('./../models/foodAndBeverageExpenseModel');
+                let localConveyanceExpenseModel = require('./../models/localConveyanceExpenseModel');
+                let miscellaneousExpenseModel = require('./../models/miscellaneousExpenseModel');
+                let purchaseGstExpenseModel = require('./../models/purchaseGstExpenseModel');
+
+                let transprotationExpense = new transportationExpenseModel(_session);
+                let accomodationExpense = new accomodationExpenseModel(_session);
+                let foodAndBeverageExpense = new foodAndBeverageExpenseModel(_session);
+                let localConveyanceExpense = new localConveyanceExpenseModel(_session);
+                let miscellaneousExpense = new miscellaneousExpenseModel(_session);
+                let purchaseGstExpense = new purchaseGstExpenseModel(_session);
+                
+                let body = {};
+                body.projectId = projectId || null;
+
+                transprotationExpense.getNewInstance(body);
+                accomodationExpense.getNewInstance(body);
+                foodAndBeverageExpense.getNewInstance(body);
+                localConveyanceExpense.getNewInstance(body);
+                miscellaneousExpense.getNewInstance(body);
+                purchaseGstExpense.getNewInstance(body);
+
+                const asyncFunctions = [
+                    transprotationExpense.getProjectTotalExpense(),
+                    accomodationExpense.getProjectTotalExpense(),
+                    foodAndBeverageExpense.getProjectTotalExpense(),
+                    localConveyanceExpense.getProjectTotalExpense(),
+                    miscellaneousExpense.getProjectTotalExpense(),
+                    purchaseGstExpense.getProjectTotalExpense()
+                ];
+                const arrayToObject = (array, keyField) =>
+                array.reduce((obj, item) => {
+                    obj[item[keyField]] = item
+                    delete item._id
+                    return obj
+                }, {})
+                const arrayOfObj =  arrayToObject(
+                                        await Promise.all(asyncFunctions), "_id")
+                                        
+                console.log("totalExpense = ", arrayOfObj);
+                resolve(arrayOfObj);
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+
+        });
     }
 }
 let router = {
@@ -417,6 +473,20 @@ let router = {
             })
         };
         service.getProjectExcel(req.session, req.query).then(successCB, next);
+    },
+    allExpensesSum: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "Projects Total Expenses Calculated",
+                    code: "All Expenses Sum"
+                }],
+                allExpensesSum: data
+            })
+        };
+        console.log("req.params.projectId",req.params.projectId);
+        service.allExpensesSum(req.session, req.params.projectId).then(successCB, next);
     }
 };
 module.exports.service = service;

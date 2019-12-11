@@ -261,4 +261,44 @@ module.exports = model = class model {
             });
         });
     }
+
+    getProjectTotalExpense() {
+        let instance = this;
+        return new Promise(function (resolve, reject) {
+            let key = {
+                $eq: ["$projectId", (instance.dbObject || {}).projectId || null]
+            }
+            let readCallback = (err, result) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(result[0] || {});
+                }
+            }
+            initDatabases('expensemanager').then((db) => {
+                db.collection(instance.tableName).aggregate([
+                    {$group: { 
+                        _id: instance.tableName,
+                         totalAmount: {$sum: { $toInt: {
+                             $cond: [
+                                key,
+                                 "$totalAmount",
+                                 0
+                            ] 
+                         }}},
+                         totalApprovedAmount: {$sum: { $toInt: {
+                            $cond: [
+                               key,
+                                "$totalApprovedAmount",
+                                0
+                           ] 
+                        }}}
+                    }}
+                ]).toArray(readCallback);
+            }).catch(err => {
+                reject(err);
+            });
+        }); 
+    }
+    
 }

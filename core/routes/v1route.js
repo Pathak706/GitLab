@@ -59,7 +59,9 @@ module.exports = (express) => {
     versionRouter.get('/projects/:projectId/users', jwt.verifyRequest, projectservice.getProjectUsers);
     versionRouter.put('/projects/:projectId/attributes', jwt.verifyRequest, projectservice.updateAttributes);
     versionRouter.delete('/projects/:projectId/attributes', jwt.verifyRequest, projectservice.deleteAttributes);
+    
     /* Project Routes */
+    versionRouter.post("/projects/:projectId/allExpensesSum", jwt.verifyRequest, projectservice.allExpensesSum);
 
 
     /* Expenses Routes */
