@@ -304,4 +304,35 @@ module.exports = model = class model {
         }); 
     }
     
+    getClosedProjectsCount(query, state) {
+        let instance = this;
+        let res = {
+            _id: instance.tableName,
+            not_approved_count: 0
+        }
+        return new Promise(function (resolve, reject) {
+            let key = {
+                projectId: (instance.dbObject || {}).projectId || null,
+                "attributes.approved": state
+            }
+            let readCallback = (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if(result[0])
+                        res.not_approved_count = result[0]['not_approved_count'];
+                    resolve(res);
+                }
+            }
+            initDatabases('expensemanager').then((db) => {
+                db.collection(instance.tableName).aggregate([
+                    query.userId,
+                    { $match: key },
+                    { $count: "not_approved_count" }
+                ]).toArray(readCallback);
+            }).catch(err => {
+                reject(err);
+            });
+        });
+    }
 }

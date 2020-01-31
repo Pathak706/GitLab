@@ -62,7 +62,7 @@ module.exports = (express) => {
     
     /* Project Routes */
     versionRouter.get("/projects/:projectId/allExpensesSum", jwt.verifyRequest, projectservice.allExpensesSum);
-
+    versionRouter.get("/projects/:projectId/notApprovedExpenses", jwt.verifyRequest, projectservice.notApprovedExpenses);
 
     /* Expenses Routes */
     versionRouter.post('/expenses/transportation-expenses', jwt.verifyRequest, fileservice.expenseCreateRequest, transportationExpenseService.create);
