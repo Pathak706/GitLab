@@ -320,6 +320,7 @@ let service = {
     allExpensesSum: (...args) => {
         return new Promise(async function (resolve, reject) {
             try {
+                let state = true;
                 let _session = args[0] || {};
                 let projectId = args[1] || null;
                 let body = args[2] || {};
@@ -357,12 +358,12 @@ let service = {
                 purchaseGstExpense.getNewInstance(body);
 
                 const asyncFunctions = [
-                    transprotationExpense.getProjectTotalExpense(body),
-                    accomodationExpense.getProjectTotalExpense(body),
-                    foodAndBeverageExpense.getProjectTotalExpense(body),
-                    localConveyanceExpense.getProjectTotalExpense(body),
-                    miscellaneousExpense.getProjectTotalExpense(body),
-                    purchaseGstExpense.getProjectTotalExpense(body)
+                    transprotationExpense.getProjectTotalExpense(body, state),
+                    accomodationExpense.getProjectTotalExpense(body, state),
+                    foodAndBeverageExpense.getProjectTotalExpense(body, state),
+                    localConveyanceExpense.getProjectTotalExpense(body, state),
+                    miscellaneousExpense.getProjectTotalExpense(body, state),
+                    purchaseGstExpense.getProjectTotalExpense(body, state)
                 ];
                 const arrayToObject = (array, keyField) =>
                 array.reduce((obj, item) => {
