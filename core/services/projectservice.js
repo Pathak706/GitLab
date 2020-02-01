@@ -324,7 +324,6 @@ let service = {
                 let projectId = args[1] || null;
                 let body = args[2] || {};
 
-                console.log("body",body);
                 let transportationExpenseModel = require('./../models/transportationExpenseModel');
                 let accomodationExpenseModel = require('./../models/accomodationExpenseModel');
                 let foodAndBeverageExpenseModel = require('./../models/foodAndBeverageExpenseModel');
@@ -349,7 +348,6 @@ let service = {
                         }
                     };
                 }
-                console.log("users",body);
 
                 transprotationExpense.getNewInstance(body);
                 accomodationExpense.getNewInstance(body);
@@ -382,7 +380,74 @@ let service = {
             }
 
         });
-    }
+    },
+
+    notApprovedExpenses: (...args) => {
+        return new Promise(async function (resolve, reject) {
+            try {
+                let state = false;
+                let _session = args[0] || {};
+                let projectId = args[1] || null;
+                let body = args[2] || {};
+
+                let transportationExpenseModel = require('./../models/transportationExpenseModel');
+                let accomodationExpenseModel = require('./../models/accomodationExpenseModel');
+                let foodAndBeverageExpenseModel = require('./../models/foodAndBeverageExpenseModel');
+                let localConveyanceExpenseModel = require('./../models/localConveyanceExpenseModel');
+                let miscellaneousExpenseModel = require('./../models/miscellaneousExpenseModel');
+                let purchaseGstExpenseModel = require('./../models/purchaseGstExpenseModel');
+
+                let transprotationExpense = new transportationExpenseModel(_session);
+                let accomodationExpense = new accomodationExpenseModel(_session);
+                let foodAndBeverageExpense = new foodAndBeverageExpenseModel(_session);
+                let localConveyanceExpense = new localConveyanceExpenseModel(_session);
+                let miscellaneousExpense = new miscellaneousExpenseModel(_session);
+                let purchaseGstExpense = new purchaseGstExpenseModel(_session);
+                
+                // 
+                body.projectId = projectId || null;
+                body.userId = {$match: { userId : /.*/g}};
+                if (!!body.users) {
+                    body.userId = { 
+                        $match: {
+                                userId: { $in: body.users.split(",") },
+                        }
+                    };
+                }
+                // console.log("body", body);
+
+                transprotationExpense.getNewInstance(body);
+                accomodationExpense.getNewInstance(body);
+                foodAndBeverageExpense.getNewInstance(body);
+                localConveyanceExpense.getNewInstance(body);
+                miscellaneousExpense.getNewInstance(body);
+                purchaseGstExpense.getNewInstance(body);
+
+                const asyncFunctions = [
+                    transprotationExpense.getClosedProjectsCount(body, state),
+                    accomodationExpense.getClosedProjectsCount(body, state),
+                    foodAndBeverageExpense.getClosedProjectsCount(body, state),
+                    localConveyanceExpense.getClosedProjectsCount(body, state),
+                    miscellaneousExpense.getClosedProjectsCount(body, state),
+                    purchaseGstExpense.getClosedProjectsCount(body, state)
+                ];
+
+                const arrayToObject = (array, keyField) =>
+                array.reduce((obj, item) => {
+                    obj[item[keyField]] = item
+                    delete item._id
+                    return obj
+                }, {})
+                const arrayOfObj =  arrayToObject(
+                                        await Promise.all(asyncFunctions), "_id")
+                                        
+                resolve(arrayOfObj);            
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
 }
 let router = {
     create: (req, res, next) => {
@@ -497,6 +562,19 @@ let router = {
             })
         };
         service.allExpensesSum(req.session, req.params.projectId, req.query).then(successCB, next);
+    },
+    notApprovedExpenses: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "Total Number of Non Approved Expenses ",
+                    code: "Not Approved Expenses"
+                }],
+                notApprovedCount: data
+            })
+        }; 
+        service.notApprovedExpenses(req.session, req.params.projectId, req.query).then(successCB, next);
     }
 };
 module.exports.service = service;

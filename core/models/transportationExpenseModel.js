@@ -79,7 +79,7 @@ module.exports = model = class model {
     };
     validate(requiredFields) {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let obj = instance.dbObject || {};
                 let errors = [];
@@ -105,7 +105,7 @@ module.exports = model = class model {
     }
     create() {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             instance.dbObject.created_at = new Date().getTime();
             instance.dbObject.updated_at = new Date().getTime();
             instance.dbObject.created_by = (instance._session || {}).userId || null;
@@ -142,7 +142,7 @@ module.exports = model = class model {
     }
     getLatestId() {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             let key = {
                 id: "1"
             }
@@ -163,7 +163,7 @@ module.exports = model = class model {
     }
     read() {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             let key = {
                 expenseId: (instance.dbObject || {}).expenseId || null
             }
@@ -189,7 +189,7 @@ module.exports = model = class model {
     }
     update(values) {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             let toSet = {};
             let findQuery = {
                 expenseId: (instance.dbObject || {}).expenseId || null
@@ -227,7 +227,7 @@ module.exports = model = class model {
     }
     delete() {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             let key = {
                 expenseId: (instance.dbObject || {}).expenseId || null
             }
@@ -247,7 +247,7 @@ module.exports = model = class model {
     }
     getExpenses(query) {
         let instance = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             let key = query;
             let readCallback = (err, result) => {
                 if (err) {
@@ -274,34 +274,77 @@ module.exports = model = class model {
                 if (err) {
                     reject(err)
                 } else {
+                    // console.log("result[0] => ", result[0])
                     resolve(result[0] || []);
                 }
             }
             initDatabases('expensemanager').then((db) => {
                 db.collection(instance.tableName).aggregate([
                     query.userId,
-                    {$group: { 
-                        _id: instance.tableName,
-                         totalAmount: {$sum: { $toInt: {
-                             $cond: [
-                                key,
-                                 "$totalAmount",
-                                 0
-                            ] 
-                         }}},
-                         totalApprovedAmount: {$sum: { $toInt: {
-                            $cond: [
-                               key,
-                                "$totalApprovedAmount",
-                                0
-                           ] 
-                        }}}
-                    }}
+                    {
+                        $group: {
+                            _id: instance.tableName,
+                            totalAmount: {
+                                $sum: {
+                                    $toInt: {
+                                        $cond: [
+                                            key,
+                                            "$totalAmount",
+                                            0
+                                        ]
+                                    }
+                                }
+                            },
+                            totalApprovedAmount: {
+                                $sum: {
+                                    $toInt: {
+                                        $cond: [
+                                            key,
+                                            "$totalApprovedAmount",
+                                            0
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
                 ]).toArray(readCallback);
             }).catch(err => {
                 reject(err);
             });
-        }); 
+        });
     }
-    
+
+    getClosedProjectsCount(query, state) {
+        let instance = this;
+        let res = {
+            _id: instance.tableName,
+            not_approved_count: 0
+        }
+        return new Promise(function (resolve, reject) {
+            let key = {
+                projectId: (instance.dbObject || {}).projectId || null,
+                "attributes.approved": state
+            }
+            let readCallback = (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if(result[0])
+                        res.not_approved_count = result[0]['not_approved_count'];
+                    resolve(res);
+                }
+            }
+            initDatabases('expensemanager').then((db) => {
+                db.collection(instance.tableName).aggregate([
+                    query.userId,
+                    { $match: key },
+                    { $count: "not_approved_count" }
+                ]).toArray(readCallback);
+            }).catch(err => {
+                reject(err);
+            });
+        });
+    }
+
 }
