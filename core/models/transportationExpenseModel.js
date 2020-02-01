@@ -264,11 +264,11 @@ module.exports = model = class model {
         });
     }
 
-    getProjectTotalExpense(query) {
+    getProjectTotalExpense(query, state) {
         let instance = this;
         return new Promise(function (resolve, reject) {
             let key = {
-                $eq: ["$projectId", (instance.dbObject || {}).projectId || null]
+                $eq: ["$projectId", (instance.dbObject || {}).projectId || null],
             }
             let readCallback = (err, result) => {
                 if (err) {
@@ -281,6 +281,7 @@ module.exports = model = class model {
             initDatabases('expensemanager').then((db) => {
                 db.collection(instance.tableName).aggregate([
                     query.userId,
+                    { $match: {"attributes.approved": state} },
                     {
                         $group: {
                             _id: instance.tableName,
