@@ -267,52 +267,40 @@ module.exports = model = class model {
     getProjectTotalExpense(query, state) {
         let instance = this;
         return new Promise(function (resolve, reject) {
-            let key = {
-                $eq: ["$projectId", (instance.dbObject || {}).projectId || null],
+            let res = {
+                _id: instance.tableName,
+                totalAmount: 0,
+                totalApprovedAmount: 0
             }
+            let key = {
+                "projectId": (instance.dbObject || {}).projectId || null,
+                "attributes.approved": state 
+            }
+
             let readCallback = (err, result) => {
                 if (err) {
                     reject(err)
                 } else {
-                    // console.log("result[0] => ", result[0])
-                    resolve(result[0] || []);
+                    let totalAmount = 0;
+                    let totalApprovedAmount = 0;
+                    result.forEach( Element => {
+                        totalAmount += Element.totalAmount ? parseInt(Element.totalAmount) : 0;
+                        totalApprovedAmount += Element.totalApprovedAmount ? parseInt(Element.totalApprovedAmount) : 0;
+                    }); 
+                    res.totalAmount = totalAmount;
+                    res.totalApprovedAmount = totalApprovedAmount;
+                        resolve(res || []);                
                 }
             }
             initDatabases('expensemanager').then((db) => {
                 db.collection(instance.tableName).aggregate([
                     query.userId,
-                    { $match: {"attributes.approved": state} },
-                    {
-                        $group: {
-                            _id: instance.tableName,
-                            totalAmount: {
-                                $sum: {
-                                    $toInt: {
-                                        $cond: [
-                                            key,
-                                            "$totalAmount",
-                                            0
-                                        ]
-                                    }
-                                }
-                            },
-                            totalApprovedAmount: {
-                                $sum: {
-                                    $toInt: {
-                                        $cond: [
-                                            key,
-                                            "$totalApprovedAmount",
-                                            0
-                                        ]
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    { $match: key },
                 ]).toArray(readCallback);
             }).catch(err => {
                 reject(err);
             });
+
         });
     }
 
@@ -331,7 +319,7 @@ module.exports = model = class model {
                 if (err) {
                     reject(err);
                 } else {
-                    if(result[0])
+                    if (result[0])
                         res.not_approved_count = result[0]['not_approved_count'];
                     resolve(res);
                 }
@@ -340,7 +328,12 @@ module.exports = model = class model {
                 db.collection(instance.tableName).aggregate([
                     query.userId,
                     { $match: key },
-                    { $count: "not_approved_count" }
+                    {
+                        $group: {
+                            "_id": instance.tableName,
+                            "not_approved_count": { "$sum": 1 }
+                        }
+                    },
                 ]).toArray(readCallback);
             }).catch(err => {
                 reject(err);
