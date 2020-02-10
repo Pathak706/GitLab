@@ -264,7 +264,6 @@ module.exports = model = class model {
 
     getProjectTotalExpense(query, state) {
         let instance = this;
-        let projectID = (instance.dbObject || {}).projectId || null;
         return new Promise(function (resolve, reject) {
             let res = {
                 _id: instance.tableName,
